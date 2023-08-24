@@ -2,6 +2,7 @@
 # *.c
 
 *.exe
+C-Quadratic-Sieve_C++/data.txt
 /data
 /results
 /test
