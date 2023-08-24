@@ -12,8 +12,9 @@ The theoretical running time of the single-target algorithm is $O(n^{0.6154})$. 
 
 # Implementations
 For integers within long long ($\sim 2^{63}$): see [integer_complexity_single_2i3j5k.cpp](https://github.com/hqztrue/integer_complexity/blob/main/integer_complexity_single_2i3j5k.cpp).  
-For larger integers, see [single_new.cpp](https://github.com/hqztrue/integer_complexity/blob/main/C-Quadratic-Sieve_C%2B%2B/single_new.cpp). It used [C-Quadratic-Sieve](https://github.com/michel-leonard/C-Quadratic-Sieve) for factoring.  
 
+For larger integers, see [single_new.cpp](https://github.com/hqztrue/integer_complexity/blob/main/C-Quadratic-Sieve_C%2B%2B/single_new.cpp). It used [C-Quadratic-Sieve](https://github.com/michel-leonard/C-Quadratic-Sieve) for factoring.  
+Run [compile.bat]() to compile.
 
 # License
 This project is shared under the terms of the **GNU General Public License**.
