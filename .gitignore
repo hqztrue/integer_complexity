@@ -1,0 +1,9 @@
+# *.cpp
+# *.c
+
+*.exe
+/data
+/results
+/test
+/others
+/tmp
