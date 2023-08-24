@@ -1,7 +1,10 @@
-This project is a C++ implementation of my paper "[Improved Algorithms for Integer Complexity](https://arxiv.org/pdf/2308.10301.pdf)" for computing the integer complexity $f(n)$ of a single integer $n$.
+This project is a C++ implementation of my paper "Improved Algorithms for Integer Complexity"[1] for computing the integer complexity $f(n)$ of a single integer $n$.
+
+[[1] Qizheng He, Improved Algorithms for Integer Complexity, arXiv:2308.10301 [cs.DS], 2023.](https://arxiv.org/pdf/2308.10301.pdf)
+
 
 # Complexity
-The theoretical running time of the single-target algorithm is $O(n^{0.6154})$. For our applications (searching for counterexamples for various number-theoretical conjectures) it is usually much faster, because of pruning.
+The theoretical running time of the single-target algorithm is $O(n^{0.6154})$. For our applications (searching for counterexamples for various number-theoretical conjectures) it is usually much faster, because of practical pruning strategies.
 
 
 # Conjectures
