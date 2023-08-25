@@ -1,1 +1,1 @@
-g++ -Ofast single_new.cpp -o single_new -fpermissive
+g++ -Ofast single.cpp -o single -fpermissive

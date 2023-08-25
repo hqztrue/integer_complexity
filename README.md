@@ -11,7 +11,8 @@ The theoretical running time of the single-target algorithm is $O(n^{0.6154})$. 
 # Conjectures
 1. $f(2^i)=2i$?
 2. $f(2^i3^j5^k)=2i+3j+5k$ ($k\leq 5$)?
-3. $f(p^i)=i\cdot f(p)$, for $p=577,811,109,433,163,487,2$?
+3. $f(2^i+1)=2i+1$? (except 3 and 9)
+4. $f(p^i)=i\cdot f(p)$, for $p=577,811,109,433,163,487,2$?
 
 
 # Implementations
