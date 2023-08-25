@@ -24,6 +24,8 @@ void print(u128 x){
 	putchar(x%10+'0');
 }
 void println(u128 x){print(x); putchar('\n');}
+u128 u128_from_str(const char *s){u128 x=0; while (*s)x=x*10+*s++-'0'; return x;}
+inline u128 _rand128(){static u128 x=u128_from_str("199609092119960909211996090921996090921");x+=(x<<17)+(x>>29)+1;return x;}
 u128 calc_g(int n){
 	u128 res=1;
 	while (n>=5||n==3)res*=3,n-=3;
@@ -234,6 +236,7 @@ void check3(){  // test the conjecture f(2^i+1)=2i+1.
 void check4(){  // test the conjecture f(3p)=min{f(3p-1)+1,f(p)+3} for prime p.
 	int t1=clock();
 	u128 u=1e20;
+	//u=_rand128()%u+1;
 	const int d=7;
 	for (u128 p=u;;++p){
 		if (!is_prime_slow(p))continue;
@@ -248,6 +251,23 @@ void check4(){  // test the conjecture f(3p)=min{f(3p-1)+1,f(p)+3} for prime p.
 		}
 	}
 	printf("time=%d\n",clock()-t1);
+}
+void run_sample(){
+	freopen("data.txt","w",stdout);
+	int t1=clock();	
+	for (int i=0;i<10000;++i){
+		//n=N0-i;
+		n=_rand128()%N0+1;
+		int d=6;
+		//printf("def=%d\n",d);
+		//println(i);
+		int ans=dfs128(n,d);
+		printf("%d, ",i); print(n);
+		printf(", %d, %.6lf, %.6lf\n",ans,ans/log(n)*log(3),1-1.*n/calc_g(ans));
+		fflush(stdout);
+	}
+	//printf("time=%d\n",clock()-t1);
+	fclose(stdout);
 }
 int main()
 {
@@ -266,8 +286,11 @@ int main()
 	
 	//check1();
 	//check2();
-	//check3();
-	check4();
+	check3();
+	//check4();
+	
+	//init(1e9,1LL<<61);
+	//run_sample();
     return 0;
 }
 
