@@ -9,6 +9,7 @@
 #include<bits/stdc++.h>
 using namespace std;
 #include "factorization.h"  // pollard-rho for <62 bits
+#include "statistics.h"
 
 const uchar inf=127;
 const ushort inf1=10000;
@@ -26,6 +27,7 @@ void print(u128 x){
 void println(u128 x){print(x); putchar('\n');}
 u128 u128_from_str(const char *s){u128 x=0; while (*s)x=x*10+*s++-'0'; return x;}
 inline u128 _rand128(){static u128 x=u128_from_str("199609092119960909211996090921996090921");x+=(x<<17)+(x>>29)+1;return x;}
+
 u128 calc_g(int n){
 	u128 res=1;
 	while (n>=5||n==3)res*=3,n-=3;
@@ -235,13 +237,16 @@ void check3(){  // test the conjecture f(2^i+1)=2i+1.
 }
 void check4(){  // test the conjecture f(3p)=min{f(3p-1)+1,f(p)+3} for prime p.
 	int t1=clock();
-	u128 u=1e20;
-	//u=_rand128()%u+1;
+	u128 U=1e20,u=_rand128()%U+1;
+	//u=U;
 	const int d=7;
-	for (u128 p=u;;++p){
+	for (u128 p=u;;){
+		//++p;
+		p=_rand128()%U+1+rand();
 		if (!is_prime_slow(p))continue;
 		printf("p="); println(p);
 		auto v1=dfs128(p*3-1,d),v2=dfs128(p,d),v3=dfs128(p*3,d);
+		//println(v1); println(v2); println(v3);
 		if (min(v1+1,v2+3)!=v3){
 			printf("err: p=",p); println(p);
 			printf("3p="); println(p*3);
@@ -252,22 +257,29 @@ void check4(){  // test the conjecture f(3p)=min{f(3p-1)+1,f(p)+3} for prime p.
 	}
 	printf("time=%d\n",clock()-t1);
 }
-void run_sample(){
-	freopen("data.txt","w",stdout);
-	int t1=clock();	
-	for (int i=0;i<10000;++i){
+void run_sample(int num_samples=1e4){
+	//freopen("data.txt","w",stdout);
+	int t1=clock();
+	vector<double> a;
+	for (int i=0;i<num_samples;++i){
+		if (i%100==0)printf("i=%d\n",i);
 		//n=N0-i;
 		n=_rand128()%N0+1;
 		int d=6;
 		//printf("def=%d\n",d);
 		//println(i);
 		int ans=dfs128(n,d);
-		printf("%d, ",i); print(n);
-		printf(", %d, %.6lf, %.6lf\n",ans,ans/log(n)*log(3),1-1.*n/calc_g(ans));
-		fflush(stdout);
+		double x=ans/log(n)*log(3);
+		//printf("%d, ",i); print(n);
+		//printf(", %d, %.6lf, %.6lf\n",ans,x,1-1.*n/calc_g(ans));
+		a.push_back(x);
+		//fflush(stdout);
 	}
-	//printf("time=%d\n",clock()-t1);
-	fclose(stdout);
+	double ave=mean(a),mu=stddev(a);
+	printf("N0="); println(N0);
+	printf("mean=%.6lf stddev=%.6lf\n",ave,mu);
+	printf("time=%d\n",clock()-t1);
+	//fclose(stdout);
 }
 void test(){
 	//prime_factors(123456789012345678);
@@ -281,19 +293,19 @@ void test(){
 }
 int main()
 {
+	//srand(time(0));
 	//u128 N0=1; //N0<<=120;
 	//for (int i=1;i<=23;++i)N0*=10;
 	//init(1e7,1e16);
+	init(1e9,1e16);
 	//init(1e9,1e23);
-	init(1e9,1e25);
+	//init(2e9,1e25);
 	
 	//check1();
 	//check2();
-	check3();
+	//check3();
 	//check4();
-	
-	//init(1e9,1LL<<61);
-	//run_sample();
+	run_sample(1e4);
     return 0;
 }
 
