@@ -297,7 +297,7 @@ int main()
 	//u128 N0=1; //N0<<=120;
 	//for (int i=1;i<=23;++i)N0*=10;
 	//init(1e7,1e16);
-	init(1e9,1e16);
+	init(1e9,1e18);
 	//init(1e9,1e23);
 	//init(2e9,1e25);
 	
@@ -305,7 +305,8 @@ int main()
 	//check2();
 	//check3();
 	//check4();
-	run_sample(1e4);
+	run_sample(1000);
+	//run_sample(1e4);
     return 0;
 }
 
