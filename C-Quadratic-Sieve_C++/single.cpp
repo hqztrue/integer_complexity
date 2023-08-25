@@ -269,13 +269,8 @@ void run_sample(){
 	//printf("time=%d\n",clock()-t1);
 	fclose(stdout);
 }
-int main()
-{
-	//u128 N0=1; //N0<<=120;
-	//for (int i=1;i<=23;++i)N0*=10;
-	//init(1e7,1e16);
-	//init(1e9,1e23);
-	init(1e9,1e25);
+void test(){
+	//prime_factors(123456789012345678);
 	
 	/*//n=162879576091729561ull;
 	n=155104303499468569ull;
@@ -283,6 +278,14 @@ int main()
 	cout<<(int)dfs(n,2)<<endl;
 	printf("time=%d\n",clock()-t1);
 	exit(0);*/
+}
+int main()
+{
+	//u128 N0=1; //N0<<=120;
+	//for (int i=1;i<=23;++i)N0*=10;
+	//init(1e7,1e16);
+	//init(1e9,1e23);
+	init(1e9,1e25);
 	
 	//check1();
 	//check2();
