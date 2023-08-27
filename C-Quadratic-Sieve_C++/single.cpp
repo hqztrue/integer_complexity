@@ -259,13 +259,19 @@ void check4(){  // test the conjecture f(3p)=min{f(3p-1)+1,f(p)+3} for prime p.
 }
 void run_sample(int num_samples=1e4){
 	//freopen("data.txt","w",stdout);
-	int t1=clock();
+	int t1=clock(),t2=t1;
 	vector<double> a;
+	for (int i=0;i<1000*rand();++i)_rand128();
 	for (int i=0;i<num_samples;++i){
-		if (i%100==0)printf("i=%d\n",i);
+		//if (i%100==0)printf("i=%d\n",i);
+		if (clock()-t2>6e4){
+			printf("i=%d\n",i);
+			t2=clock();
+		}
 		//n=N0-i;
-		n=_rand128()%N0+1;
+		n=_rand128()%N0+2;
 		int d=6;
+		// todo: automatically set d.
 		//printf("def=%d\n",d);
 		//println(i);
 		int ans=dfs128(n,d);
@@ -276,7 +282,7 @@ void run_sample(int num_samples=1e4){
 		//fflush(stdout);
 	}
 	double ave=mean(a),mu=stddev(a);
-	printf("N0="); println(N0);
+	printf("N0=%.2lf ",log10(N0)); println(N0);
 	printf("mean=%.6lf stddev=%.6lf\n",ave,mu);
 	printf("time=%d\n",clock()-t1);
 	//fclose(stdout);
@@ -293,20 +299,23 @@ void test(){
 }
 int main()
 {
-	//srand(time(0));
+	srand(time(0));
 	//u128 N0=1; //N0<<=120;
 	//for (int i=1;i<=23;++i)N0*=10;
 	//init(1e7,1e16);
-	init(1e9,1e18);
-	//init(1e9,1e23);
+	init(1e8,1e12);
+	//init(1e9,1e20);
 	//init(2e9,1e25);
 	
 	//check1();
 	//check2();
 	//check3();
 	//check4();
-	run_sample(1000);
 	//run_sample(1e4);
+	for (u128 i=1;i<=1e14;i*=10){
+		N0=i;
+		run_sample(1e4);
+	}
     return 0;
 }
 
