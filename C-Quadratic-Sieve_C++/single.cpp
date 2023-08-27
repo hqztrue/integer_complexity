@@ -148,6 +148,7 @@ void init(uint _n0=1e9,u128 _N0=1e23){
 	calc_all(n0);
 	printf("time=%d\n",clock()-t1);
 }
+void clear(){H.clear(); H1.clear();}
 void check1(){  // test the conjecture f(p^i)=i*f(p).
 	int t1=clock();
 	vector<int> primes={577,811,109};
@@ -261,6 +262,7 @@ void run_sample(int num_samples=1e4){
 	//freopen("data.txt","w",stdout);
 	int t1=clock(),t2=t1;
 	vector<double> a;
+	clear();
 	for (int i=0;i<1000*rand();++i)_rand128();
 	for (int i=0;i<num_samples;++i){
 		//if (i%100==0)printf("i=%d\n",i);
@@ -305,7 +307,7 @@ int main()
 	//u128 N0=1; //N0<<=120;
 	//for (int i=1;i<=23;++i)N0*=10;
 	//init(1e7,1e16);
-	init(1e8,1e12);
+	init(1e9,1e12);
 	//init(1e9,1e20);
 	//init(2e9,1e25);
 	
@@ -314,9 +316,15 @@ int main()
 	//check3();
 	//check4();
 	//run_sample(1e4);
+	while (1){
+		N0=1e13;
+		run_sample(10000);
+	}
 	for (u128 i=1;i<=1e14;i*=10){
+		if (i<=1e10)continue;
 		N0=i;
-		run_sample(1e6);
+		//run_sample(1e6);
+		run_sample(1e5);
 	}
     return 0;
 }
