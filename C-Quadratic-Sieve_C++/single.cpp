@@ -270,11 +270,12 @@ void run_sample(int num_samples=1e4){
 		}
 		//n=N0-i;
 		n=_rand128()%N0+2;
-		int d=6;
-		// todo: automatically set d.
-		//printf("def=%d\n",d);
-		//println(i);
-		int ans=dfs128(n,d);
+		//int d=6;
+		ushort ans=10000;
+		for (int d=0;d<=1000&&d<=defect(n,ans-1);++d){
+			//printf("def=%d\n",d);
+			ans=min(ans,dfs128(n,d));
+		}
 		double x=ans/log(n)*log(3);
 		//printf("%d, ",i); print(n);
 		//printf(", %d, %.6lf, %.6lf\n",ans,x,1-1.*n/calc_g(ans));
@@ -283,6 +284,7 @@ void run_sample(int num_samples=1e4){
 	}
 	double ave=mean(a),mu=stddev(a);
 	printf("N0=%.2lf ",log10(N0)); println(N0);
+	printf("#samples=%d\n",num_samples);
 	printf("mean=%.6lf stddev=%.6lf\n",ave,mu);
 	printf("time=%d\n",clock()-t1);
 	//fclose(stdout);
@@ -314,7 +316,7 @@ int main()
 	//run_sample(1e4);
 	for (u128 i=1;i<=1e14;i*=10){
 		N0=i;
-		run_sample(1e4);
+		run_sample(1e6);
 	}
     return 0;
 }
