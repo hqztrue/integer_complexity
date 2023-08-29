@@ -10,12 +10,15 @@
 using namespace std;
 #include "factorization.h"  // pollard-rho for <62 bits
 #include "statistics.h"
+#include "allocator.h"
 
 const uchar inf=127;
 const ushort inf1=10000;
 const ull U=1ull<<62;
 unordered_map<ull,pair<uchar,ushort>> H;
 unordered_map<u128,pair<uchar,ushort>> H1;
+//unordered_map<ull,pair<uchar,ushort>,std::hash<ull>,std::equal_to<ull>,myallocator<ull>> H;
+//unordered_map<u128,pair<uchar,ushort>,std::hash<u128>,std::equal_to<u128>,myallocator<u128>> H1;
 uint g[inf+1];
 uchar *a;
 uint n0; u128 n,N0;
@@ -146,9 +149,13 @@ void init(uint _n0=1e9,u128 _N0=1e23){
 	int t1=clock();
 	n0=_n0; N0=_N0;
 	calc_all(n0);
-	printf("time=%d\n",clock()-t1);
+	//printf("time=%d\n",clock()-t1);
 }
-void clear(){H.clear(); H1.clear();}
+void clear(){
+	H.clear(); H1.clear();
+	//unordered_map<ull,pair<uchar,ushort>>().swap(H);
+	//unordered_map<u128,pair<uchar,ushort>>().swap(H1);
+}
 void check1(){  // test the conjecture f(p^i)=i*f(p).
 	int t1=clock();
 	vector<int> primes={577,811,109};
@@ -258,7 +265,7 @@ void check4(){  // test the conjecture f(3p)=min{f(3p-1)+1,f(p)+3} for prime p.
 	}
 	printf("time=%d\n",clock()-t1);
 }
-void run_sample(int num_samples=1e4){
+void run_sample(int num_samples=1e4,bool debug=1){
 	//freopen("data.txt","w",stdout);
 	int t1=clock(),t2=t1;
 	vector<double> a;
@@ -267,7 +274,7 @@ void run_sample(int num_samples=1e4){
 	for (int i=0;i<num_samples;++i){
 		//if (i%100==0)printf("i=%d\n",i);
 		if (clock()-t2>6e4){
-			printf("i=%d\n",i);
+			if (debug)printf("i=%d\n",i);
 			t2=clock();
 		}
 		//n=N0-i;
@@ -285,10 +292,15 @@ void run_sample(int num_samples=1e4){
 		//fflush(stdout);
 	}
 	double ave=mean(a),mu=stddev(a);
-	printf("N0=%.2lf ",log10(N0)); println(N0);
-	printf("#samples=%d\n",num_samples);
-	printf("mean=%.6lf stddev=%.6lf\n",ave,mu);
-	printf("time=%d\n",clock()-t1);
+	if (debug){
+		printf("N0=%.2lf ",log10(N0)); println(N0);
+		printf("#samples=%d\n",num_samples);
+		printf("mean=%.6lf stddev=%.6lf\n",ave,mu);
+		printf("time=%d\n",clock()-t1);
+	}
+	else {
+		printf("%.6lf,",ave);
+	}
 	//fclose(stdout);
 }
 void test(){
@@ -307,7 +319,7 @@ int main()
 	//u128 N0=1; //N0<<=120;
 	//for (int i=1;i<=23;++i)N0*=10;
 	//init(1e7,1e16);
-	init(1e9,1e12);
+	init(1e9);
 	//init(1e9,1e20);
 	//init(2e9,1e25);
 	
@@ -317,8 +329,9 @@ int main()
 	//check4();
 	//run_sample(1e4);
 	while (1){
-		N0=1e13;
-		run_sample(10000);
+		N0=1e19;
+		run_sample(10,0);
+		return 0;
 	}
 	for (u128 i=1;i<=1e14;i*=10){
 		if (i<=1e10)continue;
