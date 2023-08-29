@@ -280,10 +280,16 @@ void run_sample(int num_samples=1e4,bool debug=1){
 		//n=N0-i;
 		n=_rand128()%N0+2;
 		//int d=6;
-		ushort ans=10000;
-		for (int d=0;d<=1000&&d<=defect(n,ans-1);++d){
+		ushort ans=10000,ans1=ans;
+		for (int d=0;d<=6&&d<=defect(n,ans-1);++d){  //100
 			//printf("def=%d\n",d);
-			ans=min(ans,dfs128(n,d));
+			ushort cur=dfs128(n,d);
+			ans=min(ans,cur);
+			if (d==6)ans1=cur;
+			if (d>6&&cur!=ans1){
+				printf("err: d=%d %d %d\n",d,cur,ans1);
+				println(n);
+			}
 		}
 		double x=ans/log(n)*log(3);
 		//printf("%d, ",i); print(n);
@@ -330,7 +336,7 @@ int main()
 	//run_sample(1e4);
 	while (1){
 		N0=1e19;
-		run_sample(10,0);
+		run_sample(500,0);
 		return 0;
 	}
 	for (u128 i=1;i<=1e14;i*=10){
