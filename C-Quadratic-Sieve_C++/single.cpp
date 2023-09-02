@@ -11,6 +11,7 @@ using namespace std;
 #include "factorization.h"  // pollard-rho for <62 bits
 #include "statistics.h"
 #include "allocator.h"
+#include "c_rho-128-bits.h"
 
 const uchar inf=127;
 const ushort inf1=10000;
@@ -40,6 +41,10 @@ int defect_approx(u128 n,int cur){
 	const double eps=1e-3;
 	for (int i=1;;++i)
 		if (calc_g(i)*(1+eps)>=n)return max(cur-i,0);
+}
+int complexity_LB_naive(u128 n){
+	for (int i=1;;++i)
+		if (calc_g(i)>=n)return i;
 }
 int complexity_LB(u128 n){  //todo: tighter (+1)
 	for (int i=1;;++i)
@@ -81,7 +86,7 @@ const vector<pair<T,uchar>> prime_factors(T x){
 	free(str);
 }*/
 template<class T>
-const vector<pair<T,uchar>> prime_factors128(T x){  // factorize 128 bits
+const vector<pair<T,uchar>> prime_factors128_old(T x){  // factorize 128 bits
 	vector<pair<T,uchar>> a;
 	cint N;
 	fac_params config = {0};
@@ -102,6 +107,26 @@ const vector<pair<T,uchar>> prime_factors128(T x){  // factorize 128 bits
 		free(s);
 	}
 	//for (auto &t:a)printf("%I64d %d\n",t.first,t.second);
+	return a;
+}
+template<class T>
+const vector<pair<T,uchar>> prime_factors128(T x){  // factorize 128 bits
+	vector<pair<T,uchar>> a;
+	// allocate memory for 128 factors.
+    positive_number *factors = (positive_number*)calloc(128, sizeof(positive_number)), n = x;
+	// generate a random number of ~ n_bits bits.
+	//printf("n=%40s\n", to_string_128_bits(n));
+	// fill the "factors" array with the prime factors.
+	factor(n, factors);
+	// iterate over the factors (zero terminated array).
+	vector<u128> v;
+	for (int j = 0; factors[j]; ++j)v.push_back(factors[j]);
+	sort(v.begin(),v.end());
+	for (int i=0;i<v.size();++i)
+		if (i==0||v[i]!=v[i-1])a.push_back({v[i],1});
+		else ++a[a.size()-1].second;
+    // release memory.
+    free(factors);
 	return a;
 }
 template<class T>
@@ -184,10 +209,11 @@ void clear(){
 }
 void check1(){  // test the conjecture f(p^i)=i*f(p). (In particular, f(2^i)=2i.)
 	int t1=clock();
-	//vector<int> primes={733,379,739,541};  // conjecture fails
+	vector<int> primes={733,379,739,541};  // conjecture fails
 	//vector<int> primes={577,811,109};
 	//vector<int> primes={433,163,487,2};
-	vector<int> primes={2};
+	//vector<int> primes={2};
+	//vector<int> primes={109};
 	for (auto mul:primes){
 		printf("mul=%I64d\n",mul);
 		u128 x=mul;
@@ -360,8 +386,8 @@ int main()
 	//u128 N0=1; //N0<<=120;
 	//for (int i=1;i<=23;++i)N0*=10;
 	//init(1e7,1e16);
-	//init(1e8,1e20);
-	init(2e9,1e35);
+	init(1e8,1e20);
+	//init(2e9,1e35);
 	//init(1e9,1e20);
 	//init(2e9,1e25);
 	
