@@ -9,6 +9,85 @@ static positive_number multiplication_modulo(positive_number a, positive_number 
     return res % mod;
 }
 
+
+int CTZ128(u128 x){
+	if (!x)return 128;
+	u64 low=x<<64>>64;
+	if (low)return __builtin_ctzll(low);
+	return __builtin_ctzll(x>>64)+64;
+}
+
+u128 gcd128(u128 a, u128 b)
+{
+    if (!a || !b)
+        return a | b;
+    int sh = CTZ128(a | b);
+    a >>= CTZ128(a);
+    do
+    {
+        b >>= CTZ128(b);
+        if (a > b)
+            SWAP(a, b);
+        b -= a;
+    } while (b);
+    return a << sh;
+}
+
+u128 f128(u128 x, u128 c, u128 m) {
+    return multiplication_modulo(x, x, m)+c;
+}
+
+u128 diff128(u128 a, u128 b) {
+    // a and b are unsigned and so is their difference, so we can't just call abs(a - b)
+    return a > b ? a - b : b - a;
+}
+
+unordered_map<u128,u128> P1;
+const int M = 512;  //1024
+const int p[]={2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,
+	67,71,73,79,83,89,97,101,103,107,109,113,127,131,137,139,149,
+	151,157,163,167,173,179,181,191,193,197,199,211,223,227,229,
+	233,239,241,251,257,263,269,271};
+
+u128 find_factor128(u128 n, u128 x0 = 2, u128 a = 1) {
+	auto it=P1.find(n);
+	if (it!=P1.end())return it->second;
+	for (int i=0;i<50;++i)if (n%p[i]==0)return p[i];
+	/*if (is_prime(n)||n==1){
+		P1[n]=n;
+		return n;
+	}*/
+    while (1){
+	    u128 x = rand128()%n, c=n-(rand128()%(n-1)+1);
+	    for (int l = M; l < (1 << 30); l *= 2) {
+	        u128 y = x, p = 1;
+	        for (int i = 0; i < l; i += M) {
+	            for (int j = 0; j < M; j++) {
+	                x = f128(x, c, n);
+	                p = multiplication_modulo(p, diff128(x, y), n);
+	            }
+	            u128 g = gcd128(p, n);
+	            if (g == n)
+			    {
+			        do
+			        {
+			            y = f128(y,c,n);
+			            g = gcd128(diff128(x,y), n);
+			        } while (g == 1);
+			    }
+			    if (g==n)goto end;
+	            if (g != 1 && g != n){
+					P1[n]=g;
+	                return g;
+				}
+	        }
+	    }
+	    end:;
+	}
+    return 1;
+}
+
+
 static int is_prime(positive_number n, int k) {
     positive_number a = 0, b, c, d, e, f, g; int h, i;
     if ((n == 1) == (n & 1)) return n == 2;
@@ -28,16 +107,17 @@ static int is_prime(positive_number n, int k) {
     return 1;
 }
 
-unordered_map<u128,u128> P1;
 positive_number factor_worker(const positive_number n) {
 	auto it=P1.find(n);
 	if (it!=P1.end())return it->second;
+	for (int i=0;i<50;++i)if (n%p[i]==0)return p[i];
     size_t a = -1, b = 2 ;
     positive_number c, d = 1 + rand(), e, f;
     c = d %= n;
     do {
         if (++a == b){
             // handle your timeout here, when (a == 1 << 20) or another power of two.
+			if (a>=(1<<30))return 1;
             d = c, b <<= 1, a = 0;
         }
         c = multiplication_modulo(c, c, n);
@@ -64,7 +144,8 @@ positive_number * factor(positive_number n, positive_number *array) {
                     *array++ = n, n = 1;
                 else {
                     a = factor_worker(n); // factor_worker can't be called with a prime.
-                    array = factor(a, array);
+                    //a = find_factor128(n);
+					array = factor(a, array);
                     n /= a;
                 }
             }
@@ -73,33 +154,6 @@ positive_number * factor(positive_number n, positive_number *array) {
     while (n > 1);
     *array = 0 ;
     return array ;
-}
-
-#include <stdio.h>
-#include <assert.h>
-
-// provided for convenience, take a string and return a 128-bit unsigned integer.
-__uint128_t from_string_128_bits(const char *str) {
-    __uint128_t res = 0;
-    for (; *str; res = res * 10 + *str++ - '0');
-    return res;
-}
-
-// provided to print 128-bit unsigned integers.
-static char *to_string_128_bits(__uint128_t num) {
-    static char s[40];
-    __uint128_t mask = -1;
-    size_t a, b, c = 1, d;
-    strcpy(s, "0");
-    for (mask -= mask / 2; mask; mask >>= 1) {
-        for (a = (num & mask) != 0, b = c; b;) {
-            d = ((s[--b] - '0') << 1) + a;
-            s[b] = "0123456789"[d % 10];
-            a = d / 10;
-        }
-        for (; a; ++c, memmove(s + 1, s, c), *s = "0123456789"[a % 10], a /= 10);
-    }
-    return s;
 }
 
 int _main(){

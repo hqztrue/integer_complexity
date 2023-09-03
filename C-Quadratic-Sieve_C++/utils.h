@@ -1,3 +1,27 @@
+// provided for convenience, take a string and return a 128-bit unsigned integer.
+__uint128_t from_string_128_bits(const char *str) {
+    __uint128_t res = 0;
+    for (; *str; res = res * 10 + *str++ - '0');
+    return res;
+}
+
+// provided to print 128-bit unsigned integers.
+static char *to_string_128_bits(__uint128_t num) {
+    static char s[40];
+    __uint128_t mask = -1;
+    size_t a, b, c = 1, d;
+    strcpy(s, "0");
+    for (mask -= mask / 2; mask; mask >>= 1) {
+        for (a = (num & mask) != 0, b = c; b;) {
+            d = ((s[--b] - '0') << 1) + a;
+            s[b] = "0123456789"[d % 10];
+            a = d / 10;
+        }
+        for (; a; ++c, memmove(s + 1, s, c), *s = "0123456789"[a % 10], a /= 10);
+    }
+    return s;
+}
+
 void print(u128 x){
 	if (x<0)putchar('-'),x=-x;
 	if (x>9)print(x/10);

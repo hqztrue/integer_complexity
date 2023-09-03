@@ -11,8 +11,8 @@ using namespace std;
 #include "factorization.h"  // pollard-rho for <62 bits
 #include "statistics.h"
 #include "allocator.h"
-#include "c_rho-128-bits.h"
 #include "utils.h"
+#include "c_rho-128-bits.h"
 
 const uchar inf=127;
 const ushort inf1=10000;
@@ -419,7 +419,7 @@ int main()
 	
 	//init(1e7,1e16);
 	//init(1e8,1e30);
-	init(2e9,1e35);
+	init(1e8,1e35);
 	//init(1e9,1e20);
 	//init(2e9,1e25);
 	
@@ -430,7 +430,7 @@ int main()
 	//run_sample(1e4);
 	/*while (1){
 		N0=1e19;
-		run_sample(500,0);
+		run_sample(1000,0);
 		return 0;
 	}*/
 	/*for (u128 i=1;i<=1e30;i*=10){
