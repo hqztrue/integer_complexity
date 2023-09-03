@@ -12,6 +12,7 @@ using namespace std;
 #include "statistics.h"
 #include "allocator.h"
 #include "c_rho-128-bits.h"
+#include "utils.h"
 
 const uchar inf=127;
 const ushort inf1=10000;
@@ -23,15 +24,6 @@ unordered_map<u128,pair<uchar,ushort>> H1;
 uint g[inf+1];
 uchar *a;
 uint n0; u128 n,N0;
-void print(u128 x){
-	if (x<0)putchar('-'),x=-x;
-	if (x>9)print(x/10);
-	putchar(x%10+'0');
-}
-void println(u128 x){print(x); putchar('\n');}
-u128 u128_from_str(const char *s){u128 x=0; while (*s)x=x*10+*s++-'0'; return x;}
-inline u128 _rand128(){static u128 x=u128_from_str("199609092119960909211996090921996090921");x+=(x<<17)+(x>>29)+1;return x;}
-
 u128 calc_g(int n){  // compute the maximum integer with complexity n
 	u128 res=1;
 	while (n>=5||n==3)res*=3,n-=3;
@@ -61,7 +53,7 @@ void calc_all(uint n){  //computes f(i) for all i<=n.
 		for (uint j=6,limit=g[k];j<=limit;++j)
 			if (a[j]+a[i-j]<a[i])a[i]=a[j]+a[i-j];
 		for (uint j=2,ij=i*2;j<=i&&ij<=n;++j,ij+=i)
-			if (a[i]+a[j]<a[ij])a[ij]=a[i]+a[j]; 
+			if (a[i]+a[j]<a[ij])a[ij]=a[i]+a[j];
 	}
 }
 template<class T>
@@ -103,7 +95,8 @@ const vector<pair<T,uchar>> prime_factors128_old(T x){  // factorize 128 bits
 		char * s = cint_to_string(&ans[i]->cint, 10);
 		T y=0;
 		for (char *p=s;*p;++p)y=y*10+*p-'0';
-		a.emplace_back(y,ans[i]->power);
+		if (a.size()&&a[a.size()-1].first==y)a[a.size()-1].second+=ans[i]->power;
+		else a.emplace_back(y,ans[i]->power);
 		free(s);
 	}
 	//for (auto &t:a)printf("%I64d %d\n",t.first,t.second);
@@ -209,10 +202,10 @@ void clear(){
 }
 void check1(){  // test the conjecture f(p^i)=i*f(p). (In particular, f(2^i)=2i.)
 	int t1=clock();
-	vector<int> primes={733,379,739,541};  // conjecture fails
+	//vector<int> primes={733,379,739,541};  // conjecture fails
 	//vector<int> primes={577,811,109};
 	//vector<int> primes={433,163,487,2};
-	//vector<int> primes={2};
+	vector<int> primes={2};
 	//vector<int> primes={109};
 	for (auto mul:primes){
 		printf("mul=%I64d\n",mul);
@@ -306,12 +299,12 @@ void check3(){  // test the conjecture f(2^i+1)=2i+1.
 }
 void check4(){  // test the conjecture f(3p)=min{f(3p-1)+1,f(p)+3} for prime p.
 	int t1=clock();
-	u128 U=1e20,u=_rand128()%U+1;
+	u128 U=1e20,u=rand128()%U+1;
 	//u=U;
 	const int d=7;
 	for (u128 p=u;;){
 		//++p;
-		p=_rand128()%U+1+rand();
+		p=rand128()%U+1;
 		if (!is_prime_slow(p))continue;
 		printf("p="); println(p);
 		auto v1=dfs128(p*3-1,d),v2=dfs128(p,d),v3=dfs128(p*3,d);
@@ -331,7 +324,6 @@ void run_sample(int num_samples=1e4,bool debug=1){
 	int t1=clock(),t2=t1;
 	vector<double> a;
 	clear();
-	for (int i=0;i<1000*rand();++i)_rand128();
 	for (int i=0;i<num_samples;++i){
 		//if (i%100==0)printf("i=%d\n",i);
 		if (clock()-t2>6e4){
@@ -339,7 +331,7 @@ void run_sample(int num_samples=1e4,bool debug=1){
 			t2=clock();
 		}
 		//n=N0-i;
-		n=_rand128()%N0+2;
+		n=rand128()%N0+2;
 		//int d=6;
 		ushort ans=10000,ans1=ans;
 		for (int d=0;d<=1000&&d<=defect_approx(n,ans-1);++d){
@@ -380,14 +372,32 @@ void test(){
 	printf("time=%d\n",clock()-t1);
 	exit(0);*/
 }
+void factorize_test(u128 N=1e18,int T=1000){
+	int t1=clock();
+	for (int i1=1;i1<=T;++i1){
+		u128 n=rand128()%N+1;
+		//println(n);
+		auto a1=prime_factors128(n),a2=prime_factors128_old(n);
+		if (a1!=a2){
+			prln(a1);
+			prln(a2);
+			exit(0);
+		}
+	}
+	printf("time=%d\n",clock()-t1);
+}
 int main()
 {
 	srand(time(0));
 	//u128 N0=1; //N0<<=120;
 	//for (int i=1;i<=23;++i)N0*=10;
+	
+	factorize_test(1e18,1e3);
+	return 0;
+	
 	//init(1e7,1e16);
-	init(1e8,1e20);
-	//init(2e9,1e35);
+	//init(1e8,1e30);
+	init(2e9,1e35);
 	//init(1e9,1e20);
 	//init(2e9,1e25);
 	
