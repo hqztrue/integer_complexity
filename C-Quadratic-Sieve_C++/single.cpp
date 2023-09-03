@@ -188,6 +188,15 @@ ushort dfs128(u128 x,int t){
 	H1[x]=make_pair(t,ans);
 	return ans;
 }
+ushort calc_single(u128 n){  //compute f(n)
+	int lb=complexity_LB(n);
+	int ans=inf1;
+	for (int t=lb;t<ans;++t){
+		int res=dfs128(n,t);
+		ans=min(ans,res);
+	}
+	return ans;
+}
 
 void init(uint _n0=1e9,u128 _N0=1e23){
 	int t1=clock();
@@ -362,6 +371,32 @@ void run_sample(int num_samples=1e4,bool debug=1){
 	}
 	//fclose(stdout);
 }
+void verify(int T=1e3){
+	init(1e8,1e23);
+	u128 U=1e8-1; n0=1e4;
+	int t1=clock();
+	for (int i=1;i<=T;++i){
+		u128 n=rand128()%U+2;
+		assert(calc_single(n)==a[n]);
+		//assert(dfs128(n,a[n])==a[n]);
+	}
+	printf("time=%d\n",clock()-t1);
+}
+void factorize_test(u128 N=1e18,int T=1000){
+	int t1=clock();
+	for (int i1=1;i1<=T;++i1){
+		u128 n=rand128()%N+1;
+		//println(n);
+		auto a1=prime_factors128(n);
+		//auto a2=prime_factors128_old(n);
+		/*if (a1!=a2){
+			prln(a1);
+			prln(a2);
+			exit(0);
+		}*/
+	}
+	printf("time=%d\n",clock()-t1);
+}
 void test(){
 	//prime_factors(123456789012345678);
 	
@@ -372,27 +407,14 @@ void test(){
 	printf("time=%d\n",clock()-t1);
 	exit(0);*/
 }
-void factorize_test(u128 N=1e18,int T=1000){
-	int t1=clock();
-	for (int i1=1;i1<=T;++i1){
-		u128 n=rand128()%N+1;
-		//println(n);
-		auto a1=prime_factors128(n),a2=prime_factors128_old(n);
-		if (a1!=a2){
-			prln(a1);
-			prln(a2);
-			exit(0);
-		}
-	}
-	printf("time=%d\n",clock()-t1);
-}
 int main()
 {
 	srand(time(0));
 	//u128 N0=1; //N0<<=120;
 	//for (int i=1;i<=23;++i)N0*=10;
 	
-	factorize_test(1e18,1e3);
+	verify();
+	//factorize_test(1e18,1e3);
 	return 0;
 	
 	//init(1e7,1e16);
