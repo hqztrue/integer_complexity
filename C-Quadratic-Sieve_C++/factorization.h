@@ -910,7 +910,7 @@ u64 ecm(u64 n)
     }
 }
 
-unordered_map<u64,u64> P; 
+unordered_map<u64,u64> P;
 u64 find_prime_factor(u64 n)
 {
 	u64 n0=n;

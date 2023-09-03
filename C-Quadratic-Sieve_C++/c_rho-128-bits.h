@@ -28,7 +28,10 @@ static int is_prime(positive_number n, int k) {
     return 1;
 }
 
+unordered_map<u128,u128> P1;
 positive_number factor_worker(const positive_number n) {
+	auto it=P1.find(n);
+	if (it!=P1.end())return it->second;
     size_t a = -1, b = 2 ;
     positive_number c, d = 1 + rand(), e, f;
     c = d %= n;
@@ -40,6 +43,7 @@ positive_number factor_worker(const positive_number n) {
         c = multiplication_modulo(c, c, n);
         for (++c, c *= c != n, e = n, f = c > d ? c - d : d - c; (f %= e) && (e %= f););
     } while ((f |= e) == 1);
+	if (f!=1&&f!=n)P1[n]=f;
     return f;
 }
 

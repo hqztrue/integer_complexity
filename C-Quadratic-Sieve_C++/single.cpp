@@ -21,7 +21,7 @@ unordered_map<ull,pair<uchar,ushort>> H;
 unordered_map<u128,pair<uchar,ushort>> H1;
 //unordered_map<ull,pair<uchar,ushort>,std::hash<ull>,std::equal_to<ull>,myallocator<ull>> H;
 //unordered_map<u128,pair<uchar,ushort>,std::hash<u128>,std::equal_to<u128>,myallocator<u128>> H1;
-u128 g[inf1];
+u128 g[inf1],g1;
 uchar *a;
 uint n0; u128 n,N0;
 u128 calc_g(int n){  // compute the maximum integer with complexity n
@@ -39,13 +39,14 @@ int complexity_LB_naive(u128 n){
 		if (g[i]>=n)return i;
 }
 int complexity_LB(u128 n){  //todo: tighter (+1)
-	for (int i=1;;++i)
-		if (g[i]>=n)return i;
+	//for (int i=1;;++i)
+	//	if (g[i]>=n)return i;
+	return lower_bound(g+1,g+g1,n)-g;
 }
 int _init=[](){
 	for (int i=0;;++i){
 		g[i]=calc_g(i);
-		if (i&&g[i]<g[i-1])break;
+		if (i&&g[i]<g[i-1]){g1=i; break;}
 	}
 	return 0;
 }();
@@ -160,7 +161,8 @@ ushort dfs(ull x,int t){  //decides whether f(x)<=t. If true, return the optimal
 		ushort lb=complexity_LB(x-i);
 		if (a[i]+lb<=t)ans=min(ans,ushort(dfs(x-i,t-a[i])+a[i]));
 	}
-	for (auto &g:get_factors(x))
+	auto fac=get_factors(x);
+	for (auto &g:fac)
 		if (g>1&&g<=x/g){
 			ushort lb1=complexity_LB(g),lb2=complexity_LB(x/g);
 			if (lb1+lb2>t)continue;
@@ -184,7 +186,8 @@ ushort dfs128(u128 x,int t){
 		ushort lb=complexity_LB(x-i);
 		if (a[i]+lb<=t)ans=min(ans,ushort(dfs128(x-i,t-a[i])+a[i]));
 	}
-	for (auto &g:get_factors(x))
+	auto fac=get_factors(x);
+	for (auto &g:fac)
 		if (g>1&&g<=x/g){
 			ushort lb1=complexity_LB(g),lb2=complexity_LB(x/g);
 			if (lb1+lb2>t)continue;
@@ -349,18 +352,7 @@ void run_sample(int num_samples=1e4,bool debug=1){
 		}
 		//n=N0-i;
 		n=rand128()%N0+2;
-		//int d=6;
-		ushort ans=10000,ans1=ans;
-		for (int d=0;d<=1000&&d<=defect_approx(n,ans-1);++d){
-			//printf("def=%d\n",d);
-			ushort cur=dfs128(n,d);
-			ans=min(ans,cur);
-			if (d==6)ans1=cur;
-			if (d>6&&cur!=ans1){
-				printf("err: d=%d %d %d\n",d,cur,ans1);
-				println(n);
-			}
-		}
+		ushort ans=calc_single(n);
 		double x=ans/log(n)*log(3);
 		//printf("%d, ",i); print(n);
 		//printf(", %d, %.6lf, %.6lf\n",ans,x,1-1.*n/calc_g(ans));
@@ -421,9 +413,9 @@ int main()
 	//u128 N0=1; //N0<<=120;
 	//for (int i=1;i<=23;++i)N0*=10;
 	
-	verify();
+	//verify();
 	//factorize_test(1e18,1e3);
-	return 0;
+	//return 0;
 	
 	//init(1e7,1e16);
 	//init(1e8,1e30);
@@ -440,8 +432,8 @@ int main()
 		N0=1e19;
 		run_sample(500,0);
 		return 0;
-	}
-	for (u128 i=1;i<=1e14;i*=10){
+	}*/
+	/*for (u128 i=1;i<=1e30;i*=10){
 		if (i<=1e10)continue;
 		N0=i;
 		//run_sample(1e6);
