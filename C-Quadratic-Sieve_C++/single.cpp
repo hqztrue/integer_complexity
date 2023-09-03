@@ -166,7 +166,11 @@ ushort dfs(ull x,int t){  //decides whether f(x)<=t. If true, return the optimal
 		if (g>1&&g<=x/g){
 			ushort lb1=complexity_LB(g),lb2=complexity_LB(x/g);
 			if (lb1+lb2>t)continue;
-			ushort v1=dfs(g,t-lb2);
+			//ushort v1=dfs(g,t-lb2);
+			ushort v1=inf1;
+			for (int i=lb1;i<=t-lb2&&i<v1;++i){
+				v1=min(v1,dfs(g,i));
+			}
 			if (v1+lb2>t)continue;
 			ushort v2=dfs(x/g,t-v1);
 			ans=min(ans,ushort(v1+v2));
@@ -191,7 +195,11 @@ ushort dfs128(u128 x,int t){
 		if (g>1&&g<=x/g){
 			ushort lb1=complexity_LB(g),lb2=complexity_LB(x/g);
 			if (lb1+lb2>t)continue;
-			ushort v1=dfs128(g,t-lb2);
+			//ushort v1=dfs128(g,t-lb2);
+			ushort v1=inf1;
+			for (int i=lb1;i<=t-lb2&&i<v1;++i){
+				v1=min(v1,dfs128(g,i));
+			}
 			if (v1+lb2>t)continue;
 			ushort v2=dfs128(x/g,t-v1);
 			ans=min(ans,ushort(v1+v2));
