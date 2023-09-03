@@ -21,7 +21,7 @@ unordered_map<ull,pair<uchar,ushort>> H;
 unordered_map<u128,pair<uchar,ushort>> H1;
 //unordered_map<ull,pair<uchar,ushort>,std::hash<ull>,std::equal_to<ull>,myallocator<ull>> H;
 //unordered_map<u128,pair<uchar,ushort>,std::hash<u128>,std::equal_to<u128>,myallocator<u128>> H1;
-uint g[inf+1];
+u128 g[inf1];
 uchar *a;
 uint n0; u128 n,N0;
 u128 calc_g(int n){  // compute the maximum integer with complexity n
@@ -32,25 +32,33 @@ u128 calc_g(int n){  // compute the maximum integer with complexity n
 int defect_approx(u128 n,int cur){
 	const double eps=1e-3;
 	for (int i=1;;++i)
-		if (calc_g(i)*(1+eps)>=n)return max(cur-i,0);
+		if (g[i]*(1+eps)>=n)return max(cur-i,0);
 }
 int complexity_LB_naive(u128 n){
 	for (int i=1;;++i)
-		if (calc_g(i)>=n)return i;
+		if (g[i]>=n)return i;
 }
 int complexity_LB(u128 n){  //todo: tighter (+1)
 	for (int i=1;;++i)
-		if (calc_g(i)>=n)return i;
+		if (g[i]>=n)return i;
 }
+int _init=[](){
+	for (int i=0;;++i){
+		g[i]=calc_g(i);
+		if (i&&g[i]<g[i-1])break;
+	}
+	return 0;
+}();
 void calc_all(uint n){  //computes f(i) for all i<=n.
 	a=(uchar*)malloc(n+1); a[1]=1;
 	for (uint i=2;i<=n;++i)a[i]=inf;
-	for (uchar i=0;i<=inf;++i)g[i]=calc_g(i);
+	uint g32[inf+1];
+	for (uchar i=0;i<=inf;++i)g32[i]=calc_g(i);
 	for (uint i=2;i<=n;++i){
 		if (a[i-1]+1<a[i])a[i]=a[i-1]+1;
 		uchar t=a[i-1],k=1;
-		while (g[k]+g[t-k]>=i&&k<t/2)++k;
-		for (uint j=6,limit=g[k];j<=limit;++j)
+		while (g32[k]+g32[t-k]>=i&&k<t/2)++k;
+		for (uint j=6,limit=g32[k];j<=limit;++j)
 			if (a[j]+a[i-j]<a[i])a[i]=a[j]+a[i-j];
 		for (uint j=2,ij=i*2;j<=i&&ij<=n;++j,ij+=i)
 			if (a[i]+a[j]<a[ij])a[ij]=a[i]+a[j];
@@ -202,7 +210,7 @@ void init(uint _n0=1e9,u128 _N0=1e23){
 	int t1=clock();
 	n0=_n0; N0=_N0;
 	calc_all(n0);
-	//printf("time=%d\n",clock()-t1);
+	printf("init time=%d\n",clock()-t1);
 }
 void clear(){
 	H.clear(); H1.clear();
@@ -371,7 +379,7 @@ void run_sample(int num_samples=1e4,bool debug=1){
 	}
 	//fclose(stdout);
 }
-void verify(int T=1e3){
+void verify(int T=1e4){
 	init(1e8,1e23);
 	u128 U=1e8-1; n0=1e4;
 	int t1=clock();
