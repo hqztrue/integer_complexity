@@ -17,6 +17,7 @@ using namespace std;
 const uchar inf=127;
 const ushort inf1=10000;
 const ull U=1ull<<62;
+const u128 zero=0,inf128=~zero>>1;
 unordered_map<ull,pair<uchar,ushort>> H;
 unordered_map<u128,pair<uchar,ushort>> H1;
 //unordered_map<ull,pair<uchar,ushort>,std::hash<ull>,std::equal_to<ull>,myallocator<ull>> H;
@@ -44,23 +45,24 @@ int complexity_LB(u128 n){
 	//	if (g[i]>=n)return i;
 	return lower_bound(g+1,g+g1,n)-g;
 }
-int _init=[](){
+int _init=[](){ // precompute
 	for (int i=0;;++i){
 		g[i]=calc_g(i);
 		if (i&&g[i]<g[i-1]){g1=i; break;}
 	}
+	for (int i=0;i<300;++i)g[g1++]=inf128;
 	return 0;
 }();
-void calc_all(uint n){  //computes f(i) for all i<=n.
-	a=(uchar*)malloc(n+1); a[1]=1;
+void calc_all(uint n){  // computes f(i) for all i<=n.
+	a=(uchar*)malloc(n+1); a[0]=0; a[1]=1;
 	for (uint i=2;i<=n;++i)a[i]=inf;
 	uint g32[inf+1];
 	for (uchar i=0;i<=inf;++i)g32[i]=calc_g(i);
 	for (uint i=2;i<=n;++i){
 		if (a[i-1]+1<a[i])a[i]=a[i-1]+1;
 		uchar t=a[i-1],k=1;
-		while (g32[k]+g32[t-k]>=i&&k<t/2)++k;
-		for (uint j=6,limit=g32[k];j<=limit;++j)
+		while (k<t/2&&g32[k+1]+g32[t-k-1]>=i)++k;
+		for (uint j=6;j<=g32[k];++j)
 			if (a[j]+a[i-j]<a[i])a[i]=a[j]+a[i-j];
 		for (uint j=2,ij=i*2;j<=i&&ij<=n;++j,ij+=i)
 			if (a[i]+a[j]<a[ij])a[ij]=a[i]+a[j];
@@ -151,14 +153,14 @@ vector<T> get_factors(T x){
 	if (sizeof(T)==sizeof(ull))return get_factors_from_primes(prime_factors(x));
 	else return get_factors_from_primes(prime_factors128(x));
 }
-ushort dfs(ull x,int t){  //decides whether f(x)<=t. If true, return the optimal f(x).
+ushort dfs(ull x,int t){
 	if (x<=n0)return a[x];
 	auto it=H.find(x);
 	if (it!=H.end()&&it->second.first>=t)return it->second.second;
-	ushort ans=inf1;
-	for (int i=1;i<x;++i){
-		const int C=1000;
-		if (x-i>C&&complexity_LB_naive(i)+complexity_LB_naive(x-i-C)>t)break;  //to check
+	ushort ans=inf1,k=1;
+	while (k<t/2&&g[k+1]+g[t-k-1]>=x)++k;
+	assert(g[k]<=n0);
+	for (int i=1;i<=g[k];++i){
 		ushort lb=complexity_LB(x-i);
 		if (a[i]+lb<=t)ans=min(ans,ushort(dfs(x-i,t-a[i])+a[i]));
 	}
@@ -179,13 +181,13 @@ ushort dfs(ull x,int t){  //decides whether f(x)<=t. If true, return the optimal
 	H[x]=make_pair(t,ans);
 	return ans;
 }
-ushort dfs128(u128 x,int t){
+ushort dfs128(u128 x,int t){  //decides whether f(x)<=t. If true, return the optimal f(x).
 	if (x<=n0)return a[x];
 	if (x<U)return dfs(x,t);
 	auto it=H1.find(x);
 	if (it!=H1.end()&&it->second.first>=t)return it->second.second;
 	ushort ans=inf1,k=1;
-	while (g[k]+g[t-k]>=x&&k<t/2)++k;
+	while (k<t/2&&g[k+1]+g[t-k-1]>=x)++k;
 	assert(g[k]<=n0);
 	for (int i=1;i<=g[k];++i){
 		ushort lb=complexity_LB(x-i);
@@ -196,6 +198,10 @@ ushort dfs128(u128 x,int t){
 		if (g>1&&g<=x/g){
 			ushort lb1=complexity_LB(g),lb2=complexity_LB(x/g);
 			if (lb1+lb2>t)continue;
+			/*if (t-complexity_LB(x)>=3){
+				if (dfs128(x/g,lb2)>lb2)++lb2;
+				if (lb1+lb2>t)continue;
+			}*/
 			//ushort v1=dfs128(g,t-lb2);
 			ushort v1=inf1;
 			for (int i=lb1;i<=t-lb2&&i<v1;++i){
