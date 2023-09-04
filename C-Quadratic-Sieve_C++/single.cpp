@@ -35,10 +35,11 @@ int defect_approx(u128 n,int cur){
 		if (g[i]*(1+eps)>=n)return max(cur-i,0);
 }
 int complexity_LB_naive(u128 n){
-	for (int i=1;;++i)
-		if (g[i]>=n)return i;
+	//for (int i=1;;++i)
+	//	if (g[i]>=n)return i;
+	return lower_bound(g+1,g+g1,n)-g;
 }
-int complexity_LB(u128 n){  //todo: tighter (+1)
+int complexity_LB(u128 n){
 	//for (int i=1;;++i)
 	//	if (g[i]>=n)return i;
 	return lower_bound(g+1,g+g1,n)-g;
@@ -157,7 +158,7 @@ ushort dfs(ull x,int t){  //decides whether f(x)<=t. If true, return the optimal
 	ushort ans=inf1;
 	for (int i=1;i<x;++i){
 		const int C=1000;
-		if (x-i>C&&complexity_LB(i)+complexity_LB(x-i-C)>t)break;  //to check
+		if (x-i>C&&complexity_LB_naive(i)+complexity_LB_naive(x-i-C)>t)break;  //to check
 		ushort lb=complexity_LB(x-i);
 		if (a[i]+lb<=t)ans=min(ans,ushort(dfs(x-i,t-a[i])+a[i]));
 	}
@@ -186,7 +187,7 @@ ushort dfs128(u128 x,int t){
 	ushort ans=inf1;
 	for (int i=1;i<x;++i){
 		const int C=1000;
-		if (x-i>C&&complexity_LB(i)+complexity_LB(x-i-C)>t)break;  //to check
+		if (x-i>C&&complexity_LB_naive(i)+complexity_LB_naive(x-i-C)>t)break;  //to check
 		ushort lb=complexity_LB(x-i);
 		if (a[i]+lb<=t)ans=min(ans,ushort(dfs128(x-i,t-a[i])+a[i]));
 	}
