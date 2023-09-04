@@ -184,10 +184,10 @@ ushort dfs128(u128 x,int t){
 	if (x<U)return dfs(x,t);
 	auto it=H1.find(x);
 	if (it!=H1.end()&&it->second.first>=t)return it->second.second;
-	ushort ans=inf1;
-	for (int i=1;i<x;++i){
-		const int C=1000;
-		if (x-i>C&&complexity_LB_naive(i)+complexity_LB_naive(x-i-C)>t)break;  //to check
+	ushort ans=inf1,k=1;
+	while (g[k]+g[t-k]>=x&&k<t/2)++k;
+	assert(g[k]<=n0);
+	for (int i=1;i<=g[k];++i){
 		ushort lb=complexity_LB(x-i);
 		if (a[i]+lb<=t)ans=min(ans,ushort(dfs128(x-i,t-a[i])+a[i]));
 	}
