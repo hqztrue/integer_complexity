@@ -25,6 +25,11 @@ unordered_map<u128,pair<uchar,ushort>> H1;
 u128 g[inf1],g1;
 uchar *a;
 uint n0; u128 n,N0;
+uint log3_floor(u128 n){
+	uint ans=0;
+	while (n>=3)n/=3,++ans;
+	return ans;
+}
 u128 calc_g(int n){  // compute the maximum integer with complexity n
 	u128 res=1;
 	while (n>=5||n==3)res*=3,n-=3;
@@ -40,10 +45,13 @@ int complexity_LB_naive(u128 n){
 	//	if (g[i]>=n)return i;
 	return lower_bound(g+1,g+g1,n)-g;
 }
+unordered_map<u128,int> M_lb;
 int complexity_LB(u128 n){
-	//for (int i=1;;++i)
-	//	if (g[i]>=n)return i;
-	return lower_bound(g+1,g+g1,n)-g;
+	if (n==1)return 1;
+	int l=upper_bound(g+1,g+g1,n)-g-1;
+	auto it=M_lb.find(n);
+	if (it!=M_lb.end())return l+it->second;
+	return l+2;
 }
 int _init=[](){ // precompute
 	for (int i=0;;++i){
@@ -51,6 +59,26 @@ int _init=[](){ // precompute
 		if (i&&g[i]<g[i-1]){g1=i; break;}
 	}
 	for (int i=0;i<300;++i)g[g1++]=inf128;
+	
+	for (u128 i=1,i1=0;i1<=10;i*=2,++i1)
+		for (u128 j=1,j1=0;;j*=3,++j1){
+			if (j<=inf128/i)M_lb[i*j]=1;
+			if (j>inf128/3)break;
+		}
+	for (u128 i=1,i1=0;i1<=2;i*=2,++i1)
+		for (u128 j=1,j1=0;;j*=3,++j1){
+			for (u128 k=1,k1=0;k1<=2;k*=2,++k1)
+				for (u128 l=1,l1=0;;l*=3,++l1){
+					if (i1+k1<=2&&1.*i*(1.*k*l+1)*j<=1.*inf128)M_lb[i*(k*l+1)*j]=1;
+					if (l>inf128/3)break;
+				}
+			if (j>inf128/3)break;
+		}
+	for (u128 i=1,i1=0;i1<=2;i*=2,++i1)
+		for (u128 j=1,j1=0;;j*=3,++j1){
+			if (j<=inf128/i)M_lb[i*j]=0;
+			if (j>inf128/3)break;
+		}
 	return 0;
 }();
 void calc_all(uint n){  // computes f(i) for all i<=n.
@@ -432,11 +460,11 @@ int main()
 	//factorize_test(1e18,1e3);
 	//return 0;
 	
-	//init(1e7,1e16);
-	//init(1e8,1e30);
-	init(1e8,1e35);
+	//init(1e6,1e18);
+	//init(1e7,1e20);
+	//init(1e8,1e35);
 	//init(1e9,1e20);
-	//init(2e9,1e25);
+	init(2e9,1e35);
 	
 	check1();
 	//check2();
