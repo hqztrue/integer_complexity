@@ -189,7 +189,7 @@ ushort dfs(ull x,int t){
 		printf("time=%d CNT=%I64d\n",clock()-T0,CNT);
 		T0=clock();
 		if (H.size()>60000000)H.clear();
-		if (H1.size()>15000000)H1.clear();
+		if (H1.size()>25000000)H1.clear();
 		if (P.size()>20000000)P.clear();
 		if (P1.size()>5000000)P1.clear();
 		if (M_primes.size()>10000000)M_primes.clear();
