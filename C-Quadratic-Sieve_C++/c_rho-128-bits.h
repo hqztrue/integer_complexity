@@ -140,13 +140,18 @@ static bool is_prime(positive_number n, int k) {
 	if (it!=M_primes.end())return it->second;
 	const ull inf64=~0ull>>2;
 	if (n<inf64)return M_primes[n]=is_prime(n);
+	Montgomery128 m(n);
 	for (b = c = n - 1, h = 0; !(b & 1); b >>= 1, ++h);
     for (; k--;) {
         for (g = 0; g < sizeof(positive_number); ((char*)&a)[g++] = rand()); // random number.
         do for (d = e = 1 + a % c, f = n; (d %= f) && (f %= d););
         while (d > 1 && f > 1);
         for (d = f = 1; f <= b; f <<= 1);
-        for (; f >>= 1; d = multiplication_modulo(d, d, n), f & b && (d = multiplication_modulo(e, d, n)));
+        //for (; f >>= 1; d = multiplication_modulo(d, d, n), f & b && (d = multiplication_modulo(e, d, n)));
+		d=m.transform(d);
+		e=m.transform(e);
+        for (; f >>= 1; d = m.multiply(d, d), f & b && (d = m.multiply(e, d)));
+		d=m.reduce(d)%n;
         if (d == 1) continue;
         for (i = h; i-- && d != c; d = multiplication_modulo(d, d, n));
         if (d != c) return M_primes[n]=0;
