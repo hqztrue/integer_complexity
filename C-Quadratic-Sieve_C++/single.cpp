@@ -269,12 +269,12 @@ void check1(){  // test the conjecture f(p^i)=i*f(p). (In particular, f(2^i)=2i.
 	//vector<int> primes={577,811,109};
 	//vector<int> primes={433,163,487,2};
 	//vector<int> primes={2};
-	vector<int> primes={433};
+	vector<int> primes={2};
 	for (auto mul:primes){
 		printf("mul=%I64d\n",mul);
 		u128 x=mul;
-		for (int i=1;;++i,x*=mul){
-			//if (i<10)continue;
+		for (int i=1;i<=80;++i,x*=mul){
+			if (i<80)continue;
 			n=x;
 			//printf("i=%d n=%I64d\n",i,n);
 			int v=i*a[mul],lb=complexity_LB(n);  // v: the conjectured complexity. d: defect.
@@ -457,12 +457,12 @@ int main()
 	//for (int i=1;i<=23;++i)N0*=10;
 	
 	//verify();
-	factorize_test(1e18,1e3);
+	//factorize_test(1e18,1e3);
 	//return 0;
 	
 	//init(1e6,1e18);
-	//init(1e7,1e20);
-	init(1e9,1e36);
+	init(1e7,1e30);
+	//init(1e9,1e36);
 	//init(1e9,1e20);
 	//init(2e9,1e35);
 	

@@ -73,8 +73,8 @@ u128 gcd128(u128 a, u128 b)
     return a << sh;
 }
 
-u128 f128(u128 x, u128 c, u128 m) {
-    return multiplication_modulo(x, x, m)+c;
+u128 f128(u128 x, u128 c, const Montgomery128 &m) {
+	return m.multiply(x, x)+c;
 }
 
 u128 diff128(u128 a, u128 b) {
@@ -97,21 +97,23 @@ u128 find_factor128(u128 n, u128 x0 = 2, u128 a = 1) {
 		P1[n]=n;
 		return n;
 	}*/
+	Montgomery128 m(n);
     while (1){
 	    u128 x = rand128()%n, c=n-(rand128()%(n-1)+1);
 	    for (int l = M; l < (1 << 30); l *= 2) {
 	        u128 y = x, p = 1;
 	        for (int i = 0; i < l; i += M) {
 	            for (int j = 0; j < M; j++) {
-	                x = f128(x, c, n);
-	                p = multiplication_modulo(p, diff128(x, y), n);
+	                x = f128(x, c, m);
+	                //p = multiplication_modulo(p, diff128(x, y), n);
+					p = m.multiply(p, diff128(x, y));
 	            }
 	            u128 g = gcd128(p, n);
 	            if (g == n)
 			    {
 			        do
 			        {
-			            y = f128(y,c,n);
+			            y = f128(y,c,m);
 			            g = gcd128(diff128(x,y), n);
 			        } while (g == 1);
 			    }
@@ -165,7 +167,7 @@ positive_number factor_worker(const positive_number n) {
         }
         //c = multiplication_modulo(c, c, n);
 		c=m.multiply(c,c);
-        for (++c, c *= c != n, e = n, f = c > d ? c - d : d - c; (f %= e) && (e %= f););
+        for (++c, c *= c != n, e = n, f = c > d ? c - d : d - c; (f %= e) && (e %= f););  // gcd
     } while ((f |= e) == 1);
 	if (f!=1&&f!=n)P1[n]=f;
     return f;
@@ -188,8 +190,8 @@ positive_number * factor(positive_number n, positive_number *array) {
                 if (flag) // number of Miller-Rabin tests.
                     *array++ = n, n = 1;
                 else {
-                    a = factor_worker(n); // factor_worker can't be called with a prime.
-                    //a = find_factor128(n);
+                    //a = factor_worker(n); // factor_worker can't be called with a prime.
+                    a = find_factor128(n);
 					array = factor(a, array);
                     n /= a;
                 }
