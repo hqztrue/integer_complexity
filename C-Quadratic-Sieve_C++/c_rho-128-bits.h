@@ -11,6 +11,45 @@ static positive_number multiplication_modulo(positive_number a, positive_number 
 }
 
 
+struct u256{
+	typedef unsigned long long ull;
+	typedef unsigned __int128 u128;
+	u128 h,l;
+	u256(){h=l=0;}
+	u256(u128 x){h=0; l=x;}
+	u256(u128 x,u128 y){h=x; l=y;}
+	/*friend u256 operator +(const u256 &a,u128 b){
+		u256 c;
+		
+		return c;
+	}
+	u256& operator +=(u256 b){*this=*this+b;return *this;}*/
+	static u256 mul(u128 x,u128 y){
+		u128 h1=x>>64,l1=(ull)x,h2=y>>64,l2=(ull)y;
+		u128 h=h1*h2,l=l1*l2,v1=h1*l2,v2=h2*l1;
+		if (v1>~v2)h+=(u128)1<<64;
+		v1+=v2; h+=v1>>64; v1<<=64;
+		h+=v1>~l; l+=v1;
+		return u256(h,l);
+	}
+};
+struct Montgomery128 {
+    u128 n, nr;
+    Montgomery128(u128 n) : n(n) {
+        nr = 1;
+        for (int i = 0; i < 7; ++i)
+            nr *= 2 - n * nr;
+    }
+    u128 reduce(const u256 &x) const {
+        u128 q = x.l * nr;
+        u128 m = (u256::mul(q,n)).h;
+        return x.h + n - m;
+    }
+    u128 multiply(u128 x, u128 y) const {
+        return reduce(u256::mul(x,y));
+    }
+};
+
 int CTZ128(u128 x){
 	if (!x)return 128;
 	u64 low=x<<64>>64;
