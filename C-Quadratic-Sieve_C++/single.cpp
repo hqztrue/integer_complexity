@@ -265,11 +265,11 @@ void clear(){
 }
 void check1(){  // test the conjecture f(p^i)=i*f(p). (In particular, f(2^i)=2i.)
 	int t1=clock();
-	vector<int> primes={733,379,739,541};  // conjecture fails
+	//vector<int> primes={733,379,739,541};  // conjecture fails
 	//vector<int> primes={577,811,109};
 	//vector<int> primes={433,163,487,2};
 	//vector<int> primes={2};
-	//vector<int> primes={2};
+	vector<int> primes={811};
 	for (auto mul:primes){
 		printf("mul=%I64d\n",mul);
 		u128 x=mul;
@@ -460,8 +460,9 @@ int main()
 	//factorize_test(1e18,1e3);
 	//return 0;
 	
-	init(1e6,1e18);
+	//init(1e6,1e18);
 	//init(1e7,1e30);
+	init(1e8,1e27);
 	//init(1e9,1e36);
 	//init(1e9,1e20);
 	//init(2e9,1e35);
