@@ -25,6 +25,7 @@ unordered_map<u128,pair<uchar,ushort>> H1;
 u128 g[inf1],g1;
 uchar *a;
 uint n0; u128 n,N0;
+ull CNT; int T0=clock();
 uint log3_floor(u128 n){
 	uint ans=0;
 	while (n>=3)n/=3,++ans;
@@ -183,6 +184,16 @@ vector<T> get_factors(T x){
 }
 ushort dfs(ull x,int t){
 	if (x<=n0)return a[x];
+	++CNT;
+	if (clock()-T0>60000){
+		printf("time=%d CNT=%I64d\n",clock()-T0,CNT);
+		T0=clock();
+		if (H.size()>60000000)H.clear();
+		if (H1.size()>15000000)H1.clear();
+		if (P.size()>20000000)P.clear();
+		if (P1.size()>5000000)P1.clear();
+		if (M_primes.size()>10000000)M_primes.clear();
+	}
 	auto it=H.find(x);
 	if (it!=H.end()&&it->second.first>=t)return it->second.second;
 	ushort ans=inf1,k=1;
@@ -298,6 +309,7 @@ void check1(){  // test the conjecture f(p^i)=i*f(p). (In particular, f(2^i)=2i.
 				//exit(0);
 				break;
 			}
+			//printf("hash size: H=%d H1=%d M_lb=%d P=%d P1=%d M_primes=%d\n",H.size(),H1.size(),M_lb.size(),P.size(),P1.size(),M_primes.size());
 			if (n>N0/mul)break;
 		}
 	}
@@ -463,7 +475,7 @@ int main()
 	//init(1e6,1e18);
 	//init(1e7,1e30);
 	init(1e8,1e27);
-	//init(1e9,1e36);
+	//init(1e9,1e38);
 	//init(1e9,1e20);
 	//init(2e9,1e35);
 	

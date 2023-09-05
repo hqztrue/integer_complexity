@@ -24,6 +24,8 @@ Run [compile.bat]() to compile.
 # TODO
 1. Use a better factorization library.
 2. Use parallelization.
+3. Improve the lower bound computation.
+4. Need u256 and more memory for a significantly larger range.
 
 
 # License
