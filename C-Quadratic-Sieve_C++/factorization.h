@@ -673,10 +673,10 @@ bool is_prime(u64 n)
         u64 bases[3] = {2ul, 7ul, 61ul};
         return miller_rabin(n, 3, bases);
     }
-    else if (n < 4611686018427387904ull)
+    /*else if (n < 4611686018427387904ull)
     {
         return baillie_psw(n);  //err?
-    }
+    }*/
     else
     {
         return miller_rabin_br(n);

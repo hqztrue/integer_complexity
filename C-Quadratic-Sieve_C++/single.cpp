@@ -462,7 +462,7 @@ int main()
 	
 	//init(1e6,1e18);
 	//init(1e7,1e20);
-	init(1e9,1e35);
+	init(1e9,1e36);
 	//init(1e9,1e20);
 	//init(2e9,1e35);
 	
