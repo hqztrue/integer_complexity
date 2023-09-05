@@ -151,6 +151,7 @@ positive_number factor_worker(const positive_number n) {
 	auto it=P1.find(n);
 	if (it!=P1.end())return it->second;
 	for (int i=0;i<50;++i)if (n%p[i]==0)return p[i];
+	Montgomery128 m(n);
     size_t a = -1, b = 2 ;
     positive_number c, d = 1 + rand(), e, f;
     c = d %= n;
@@ -160,7 +161,8 @@ positive_number factor_worker(const positive_number n) {
 			if (a>=(1<<30))return 1;
             d = c, b <<= 1, a = 0;
         }
-        c = multiplication_modulo(c, c, n);
+        //c = multiplication_modulo(c, c, n);
+		c=m.multiply(c,c);
         for (++c, c *= c != n, e = n, f = c > d ? c - d : d - c; (f %= e) && (e %= f););
     } while ((f |= e) == 1);
 	if (f!=1&&f!=n)P1[n]=f;

@@ -423,7 +423,7 @@ void verify(int T=1e4){
 		assert(calc_single(n)==a[n]);
 		//assert(dfs128(n,a[n])==a[n]);
 	}
-	printf("time=%d\n",clock()-t1);
+	printf("verify time=%d\n",clock()-t1);
 }
 void factorize_test(u128 N=1e18,int T=1000){
 	int t1=clock();
@@ -431,14 +431,14 @@ void factorize_test(u128 N=1e18,int T=1000){
 		u128 n=rand128()%N+1;
 		//println(n);
 		auto a1=prime_factors128(n);
-		//auto a2=prime_factors128_old(n);
-		/*if (a1!=a2){
+		auto a2=prime_factors128_old(n);
+		if (a1!=a2){
 			prln(a1);
 			prln(a2);
 			exit(0);
-		}*/
+		}
 	}
-	printf("time=%d\n",clock()-t1);
+	printf("fac time=%d\n",clock()-t1);
 }
 void test(){
 	//prime_factors(123456789012345678);
@@ -457,7 +457,7 @@ int main()
 	//for (int i=1;i<=23;++i)N0*=10;
 	
 	//verify();
-	//factorize_test(1e18,1e3);
+	factorize_test(1e18,1e3);
 	//return 0;
 	
 	//init(1e6,1e18);
