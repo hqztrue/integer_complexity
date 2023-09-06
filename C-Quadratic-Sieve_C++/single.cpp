@@ -32,7 +32,7 @@ uint log3_floor(u128 n){
 	while (n>=3)n/=3,++ans;
 	return ans;
 }
-u128 calc_g(int n){  // compute the maximum integer with complexity n
+u128 calc_g(int n){  //compute the maximum integer with complexity n
 	u128 res=1;
 	while (n>=5||n==3)res*=3,n-=3;
 	return res<<n/2;
@@ -55,7 +55,7 @@ int complexity_LB(u128 n){
 	if (it!=M_lb.end())return l+it->second;
 	return l+2;
 }
-int _init=[](){ // precompute
+int _init=[](){ //precompute
 	for (int i=0;;++i){
 		g[i]=calc_g(i);
 		if (i&&g[i]<g[i-1]){g1=i; break;}
@@ -83,7 +83,7 @@ int _init=[](){ // precompute
 		}
 	return 0;
 }();
-void calc_all(uint n){  // computes f(i) for all i<=n.
+void calc_all(uint n){  //computes f(i) for all i<=n.
 	a=(uchar*)malloc(n+1); a[0]=0; a[1]=1;
 	for (uint i=2;i<=n;++i)a[i]=inf;
 	uint g32[inf+1];
@@ -98,7 +98,7 @@ void calc_all(uint n){  // computes f(i) for all i<=n.
 			if (a[i]+a[j]<a[ij])a[ij]=a[i]+a[j];
 	}
 }
-void calc_all_print(uint n){  // computes f(i) for all i<=n, and track the formulas.
+void calc_all_print(uint n){  //computes f(i) for all i<=n, and track the formulas.
 	a=(uchar*)malloc(n+1); a[0]=0; a[1]=1; s[1]="1";
 	for (uint i=2;i<=n;++i)a[i]=inf;
 	uint g32[inf+1];
@@ -135,7 +135,7 @@ const vector<pair<T,uchar>> prime_factors(T x){
 	free(str);
 }*/
 template<class T>
-const vector<pair<T,uchar>> prime_factors128_old(T x){  // factorize 128 bits
+const vector<pair<T,uchar>> prime_factors128_old(T x){  //factorize 128 bits, by C-Quadratic-Sieve.
 	vector<pair<T,uchar>> a;
 	cint N;
 	fac_params config = {0};
@@ -160,7 +160,7 @@ const vector<pair<T,uchar>> prime_factors128_old(T x){  // factorize 128 bits
 	return a;
 }
 template<class T>
-const vector<pair<T,uchar>> prime_factors128(T x){  // factorize 128 bits
+const vector<pair<T,uchar>> prime_factors128(T x){  //factorize 128 bits, by C-RHO-128.
 	vector<pair<T,uchar>> a;
 	// allocate memory for 128 factors.
     positive_number *factors = (positive_number*)calloc(128, sizeof(positive_number)), n = x;
@@ -269,7 +269,21 @@ ushort dfs128(u128 x,ushort t){  //decides whether f(x)<=t. If true, return the 
 	H1[x]=make_pair(t,ans);
 	return ans;
 }
-ushort calc_single(u128 n){  //compute f(n)
+bool exist_H(u128 x,ushort t){
+	if (x<=n0)return 1;
+	if (x<U){
+		auto it=H.find(x);
+		return it!=H.end()&&it->second.first>=t;
+	}
+	else {
+		auto it=H1.find(x);
+		return it!=H1.end()&&it->second.first>=t;
+	}
+}
+ushort dfs128_lazy(u128 x,ushort t){  //without performing new computation.
+	return exist_H(x,t)?dfs128(x,t):inf1;
+}
+ushort calc_single(u128 n){  //compute f(n).
 	int lb=complexity_LB(n);
 	int ans=inf1;
 	for (int t=lb;t<ans;++t){
@@ -294,7 +308,7 @@ void dfs128_print(u128 x,ushort t){  //print the formula for f(x).
 	for (int i=1;i<=g[k];++i){
 		ushort lb=complexity_LB(x-i);
 		if (a[i]+lb<=t){
-			auto v=dfs128(x-i,t-a[i]);
+			auto v=dfs128_lazy(x-i,t-a[i]);
 			ans=min(ans,ushort(v+a[i]));
 			if (v+a[i]==t){
 				printf("(");
@@ -309,17 +323,12 @@ void dfs128_print(u128 x,ushort t){  //print the formula for f(x).
 		if (g>1&&g<=x/g){
 			ushort lb1=complexity_LB(g),lb2=complexity_LB(x/g);
 			if (lb1+lb2>t)continue;
-			/*if (t-complexity_LB(x)>=3){
-				if (dfs128(x/g,lb2)>lb2)++lb2;
-				if (lb1+lb2>t)continue;
-			}*/
-			//ushort v1=dfs128(g,t-lb2);
 			ushort v1=inf1;
 			for (int i=lb1;i<=t-lb2&&i<v1;++i){
-				v1=min(v1,dfs128(g,i));
+				v1=min(v1,dfs128_lazy(g,i));
 			}
 			if (v1+lb2>t)continue;
-			ushort v2=dfs128(x/g,t-v1);
+			ushort v2=dfs128_lazy(x/g,t-v1);
 			ans=min(ans,ushort(v1+v2));
 			if (v1+v2==t){
 				printf("(");
@@ -331,10 +340,12 @@ void dfs128_print(u128 x,ushort t){  //print the formula for f(x).
 			}
 		}
 }
-void print_expr(u128 x,ushort t=0){
-	int ans=t?t:calc_single(x);
-	print(x); cout<<" "<<ans<<":"<<endl;
-	dfs128_print(x,ans);
+void print_expr(u128 x,ushort t=0,ushort d=0){  //t: f(x). d: dfs depth.
+	if (!t)t=calc_single(x);
+	if (!d)d=t;
+	dfs128(x,d);
+	print(x); cout<<" "<<t<<":"<<endl;
+	dfs128_print(x,t);
 	cout<<endl;
 }
 
