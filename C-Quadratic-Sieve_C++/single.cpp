@@ -198,6 +198,9 @@ vector<T> get_factors(T x){
 	if (sizeof(T)==sizeof(ull))return get_factors_from_primes(prime_factors(x));
 	else return get_factors_from_primes(prime_factors128(x));
 }
+void clear_hash(){
+	H.clear(); H1.clear(); P.clear(); P1.clear(); M_primes.clear();
+}
 ushort dfs(ull x,ushort t){
 	if (x<=n0)return a[x];
 	auto it=H.find(x);
@@ -480,7 +483,7 @@ void check4(){  // test the conjecture f(3p)=min{f(3p-1)+1,f(p)+3} for prime p.
 	}
 	printf("time=%d\n",clock()-t1);
 }
-void run_sample(int num_samples=1e4,bool debug=1){
+double run_sample(int num_samples=1e4,bool debug=1){
 	//freopen("data.txt","w",stdout);
 	int t1=clock(),t2=t1;
 	vector<double> a;
@@ -498,6 +501,7 @@ void run_sample(int num_samples=1e4,bool debug=1){
 		//printf("%d, ",i); print(n);
 		//printf(", %d, %.6lf, %.6lf\n",ans,x,1-1.*n/calc_g(ans));
 		a.push_back(x);
+		clear_hash();
 		//fflush(stdout);
 	}
 	double ave=mean(a),mu=stddev(a);
@@ -511,6 +515,7 @@ void run_sample(int num_samples=1e4,bool debug=1){
 		printf("%.6lf,",ave);
 	}
 	//fclose(stdout);
+	return ave;
 }
 void verify(int T=1e4){
 	init(1e8,1e23);
@@ -561,8 +566,8 @@ int main()
 	
 	//init(1e6,1e18);
 	//init(1e7,1e30);
-	init(1e7,1e38,1);
-	//init(1e8,1e38);
+	//init(1e7,1e38,1);
+	init(1e8,1e38);
 	//init(1e9,1e38);
 	//init(2e9,1e38);
 	
@@ -570,16 +575,21 @@ int main()
 	//print_expr(u128_from_str("151770612880318395249730891"),179);
 	//print_expr(u128_from_str("1361788799550131972374553991985921"),227);
 	
-	check1();
+	//check1();
 	//check2();
 	//check3();
 	//check4();
 	//run_sample(1e4);
-	/*while (1){
-		N0=1e19;
-		run_sample(1000,0);
-		return 0;
-	}*/
+	
+	vector<double> a;
+	for (int T=1;;++T){
+		N0=1e23;
+		int num_samples=2e2;
+		double res=run_sample(num_samples,1);
+		a.push_back(res);
+		printf("--------T=%d #samples=%d %.6lf--------\n",T,T*num_samples,mean(a));
+		//return 0;
+	}
 	/*for (u128 i=1;i<=1e30;i*=10){
 		if (i<=1e10)continue;
 		N0=i;
