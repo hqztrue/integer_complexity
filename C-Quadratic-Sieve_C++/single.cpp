@@ -269,19 +269,16 @@ ushort dfs128(u128 x,ushort t){  //decides whether f(x)<=t. If true, return the 
 	H1[x]=make_pair(t,ans);
 	return ans;
 }
-bool exist_H(u128 x,ushort t){
-	if (x<=n0)return 1;
+ushort dfs128_lazy(u128 x,ushort t){  //without performing new computation.
+	if (x<=n0)return a[x];
 	if (x<U){
 		auto it=H.find(x);
-		return it!=H.end()&&it->second.first>=t;
+		return it!=H.end()?it->second.second:inf1;
 	}
 	else {
 		auto it=H1.find(x);
-		return it!=H1.end()&&it->second.first>=t;
+		return it!=H1.end()?it->second.second:inf1;
 	}
-}
-ushort dfs128_lazy(u128 x,ushort t){  //without performing new computation.
-	return exist_H(x,t)?dfs128(x,t):inf1;
 }
 ushort calc_single(u128 n){  //compute f(n).
 	int lb=complexity_LB(n);
@@ -340,10 +337,11 @@ void dfs128_print(u128 x,ushort t){  //print the formula for f(x).
 			}
 		}
 }
-void print_expr(u128 x,ushort t=0,ushort d=0){  //t: f(x). d: dfs depth.
+void print_expr(u128 x,ushort t=0){  //t: f(x). d: dfs depth.
 	if (!t)t=calc_single(x);
-	if (!d)d=t;
-	dfs128(x,d);
+	ushort d=complexity_LB(x);
+	for (;dfs128(x,d)>t;)++d;
+	printf("%d %d\n",d,t);
 	print(x); cout<<" "<<t<<":"<<endl;
 	dfs128_print(x,t);
 	cout<<endl;
@@ -569,8 +567,8 @@ int main()
 	//init(2e9,1e35);
 	
 	//print_expr(u128_from_str("1234567890"));
-	print_expr(u128_from_str("151770612880318395249730891"),179);
-	//print_expr(u128_from_str("1361788799550131972374553991985921"),227);
+	//print_expr(u128_from_str("151770612880318395249730891"),179);
+	print_expr(u128_from_str("1361788799550131972374553991985921"),227);
 	
 	//check1();
 	//check2();
