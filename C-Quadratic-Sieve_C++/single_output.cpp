@@ -18,10 +18,10 @@ const uchar inf=127;
 const ushort inf1=10000;
 const ull U=1ull<<62;
 const u128 zero=0,inf128=~zero>>1;
-unordered_map<ull,pair<uchar,ushort>> H;
-unordered_map<u128,pair<uchar,ushort>> H1;
-//unordered_map<ull,pair<uchar,ushort>,std::hash<ull>,std::equal_to<ull>,myallocator<ull>> H;
-//unordered_map<u128,pair<uchar,ushort>,std::hash<u128>,std::equal_to<u128>,myallocator<u128>> H1;
+unordered_map<ull,pair<ushort,ushort>> H;
+unordered_map<u128,pair<ushort,ushort>> H1;
+//unordered_map<ull,pair<ushort,ushort>,std::hash<ull>,std::equal_to<ull>,myallocator<ull>> H;
+//unordered_map<u128,pair<ushort,ushort>,std::hash<u128>,std::equal_to<u128>,myallocator<u128>> H1;
 u128 g[inf1],g1;
 uchar *a;
 string s[10000005];
@@ -182,20 +182,20 @@ vector<T> get_factors(T x){
 	if (sizeof(T)==sizeof(ull))return get_factors_from_primes(prime_factors(x));
 	else return get_factors_from_primes(prime_factors128(x));
 }
-ushort dfs(ull x,int t){
+ushort dfs(ull x,ushort t){
 	if (x<=n0)return a[x];
+	auto it=H.find(x);
+	if (it!=H.end()&&it->second.first>=t)return it->second.second;
 	++CNT;
 	if (clock()-T0>60000){
 		printf("time=%d CNT=%I64d\n",clock()-T0,CNT);
 		T0=clock();
-		if (H.size()>60000000)H.clear();
-		if (H1.size()>15000000)H1.clear();
+		/*if (H.size()>60000000)H.clear();
+		if (H1.size()>25000000)H1.clear();
 		if (P.size()>20000000)P.clear();
 		if (P1.size()>5000000)P1.clear();
-		if (M_primes.size()>10000000)M_primes.clear();
+		if (M_primes.size()>10000000)M_primes.clear();*/
 	}
-	auto it=H.find(x);
-	if (it!=H.end()&&it->second.first>=t)return it->second.second;
 	ushort ans=inf1,k=1;
 	while (k<t/2&&g[k+1]+g[t-k-1]>=x)++k;
 	assert(g[k]<=n0);
@@ -220,7 +220,7 @@ ushort dfs(ull x,int t){
 	H[x]=make_pair(t,ans);
 	return ans;
 }
-ushort dfs128(u128 x,int t){  //decides whether f(x)<=t. If true, return the optimal f(x).
+ushort dfs128(u128 x,ushort t){  //decides whether f(x)<=t. If true, return the optimal f(x).
 	if (x<=n0)return a[x];
 	if (x<U)return dfs(x,t);
 	auto it=H1.find(x);
@@ -253,10 +253,21 @@ ushort dfs128(u128 x,int t){  //decides whether f(x)<=t. If true, return the opt
 	H1[x]=make_pair(t,ans);
 	return ans;
 }
-void dfs128_print(u128 x,int t){  //print the formula for f(x).
+ushort calc_single(u128 n){  //compute f(n)
+	int lb=complexity_LB(n);
+	int ans=inf1;
+	for (int t=lb;t<ans;++t){
+		int res=dfs128(n,t);
+		ans=min(ans,res);
+	}
+	return ans;
+}
+
+void dfs128_print(u128 x,ushort t){  //print the formula for f(x).
 	if (x<=n0){
 		printf("(");
 		cout<<s[x];
+		//print(x);
 		printf(")");
 		return;
 	}
@@ -304,14 +315,11 @@ void dfs128_print(u128 x,int t){  //print the formula for f(x).
 			}
 		}
 }
-ushort calc_single(u128 n){  //compute f(n)
-	int lb=complexity_LB(n);
-	int ans=inf1;
-	for (int t=lb;t<ans;++t){
-		int res=dfs128(n,t);
-		ans=min(ans,res);
-	}
-	return ans;
+void print_expr(u128 x,ushort t=0){
+	int ans=t?t:calc_single(x);
+	print(x); cout<<" "<<ans<<":"<<endl;
+	dfs128_print(x,ans);
+	cout<<endl;
 }
 
 void init(uint _n0=1e9,u128 _N0=1e23){
@@ -322,8 +330,8 @@ void init(uint _n0=1e9,u128 _N0=1e23){
 }
 void clear(){
 	H.clear(); H1.clear();
-	//unordered_map<ull,pair<uchar,ushort>>().swap(H);
-	//unordered_map<u128,pair<uchar,ushort>>().swap(H1);
+	//unordered_map<ull,pair<ushort,ushort>>().swap(H);
+	//unordered_map<u128,pair<ushort,ushort>>().swap(H1);
 }
 void check1(){  // test the conjecture f(p^i)=i*f(p). (In particular, f(2^i)=2i.)
 	int t1=clock();
@@ -331,7 +339,7 @@ void check1(){  // test the conjecture f(p^i)=i*f(p). (In particular, f(2^i)=2i.
 	//vector<int> primes={577,811,109};
 	//vector<int> primes={433,163,487,2};
 	//vector<int> primes={2};
-	vector<int> primes={811};
+	vector<int> primes={577};
 	for (auto mul:primes){
 		printf("mul=%I64d\n",mul);
 		u128 x=mul;
@@ -360,6 +368,7 @@ void check1(){  // test the conjecture f(p^i)=i*f(p). (In particular, f(2^i)=2i.
 				//exit(0);
 				break;
 			}
+			printf("time=%d\n",clock()-t1); t1=clock();
 			//printf("hash size: H=%d H1=%d M_lb=%d P=%d P1=%d M_primes=%d\n",H.size(),H1.size(),M_lb.size(),P.size(),P1.size(),M_primes.size());
 			if (n>N0/mul)break;
 		}
@@ -477,12 +486,6 @@ void run_sample(int num_samples=1e4,bool debug=1){
 	}
 	//fclose(stdout);
 }
-void print_expr(u128 x){
-	int ans=calc_single(x);
-	print(x); cout<<" "<<ans<<":"<<endl;
-	dfs128_print(x,ans);
-	cout<<endl;
-}
 void verify(int T=1e4){
 	init(1e8,1e23);
 	u128 U=1e8-1; n0=1e4;
@@ -521,7 +524,8 @@ void test(){
 }
 int main()
 {
-	srand(time(0));
+	//srand(time(0));
+	srand(1);
 	//u128 N0=1; //N0<<=120;
 	//for (int i=1;i<=23;++i)N0*=10;
 	
@@ -536,10 +540,9 @@ int main()
 	//init(1e9,1e20);
 	//init(2e9,1e35);
 	
-	//print_expr(u128_from_str("123"));
 	//print_expr(u128_from_str("1234567890"));
-	print_expr(u128_from_str("151770612880318395249730891"));
-	//print_expr(u128_from_str("1361788799550131972374553991985921"));
+	//print_expr(u128_from_str("151770612880318395249730891"));
+	print_expr(u128_from_str("1361788799550131972374553991985921"),227);
 	//check1();
 	//check2();
 	//check3();

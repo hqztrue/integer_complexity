@@ -24,6 +24,7 @@ unordered_map<u128,pair<ushort,ushort>> H1;
 //unordered_map<u128,pair<ushort,ushort>,std::hash<u128>,std::equal_to<u128>,myallocator<u128>> H1;
 u128 g[inf1],g1;
 uchar *a;
+string s[10000005];
 uint n0; u128 n,N0;
 ull CNT; int T0=clock();
 uint log3_floor(u128 n){
@@ -95,6 +96,21 @@ void calc_all(uint n){  // computes f(i) for all i<=n.
 			if (a[j]+a[i-j]<a[i])a[i]=a[j]+a[i-j];
 		for (uint j=2,ij=i*2;j<=i&&ij<=n;++j,ij+=i)
 			if (a[i]+a[j]<a[ij])a[ij]=a[i]+a[j];
+	}
+}
+void calc_all_print(uint n){  // computes f(i) for all i<=n, and track the formulas.
+	a=(uchar*)malloc(n+1); a[0]=0; a[1]=1; s[1]="1";
+	for (uint i=2;i<=n;++i)a[i]=inf;
+	uint g32[inf+1];
+	for (uchar i=0;i<=inf;++i)g32[i]=calc_g(i);
+	for (uint i=2;i<=n;++i){
+		if (a[i-1]+1<a[i])a[i]=a[i-1]+1,s[i]=s[i-1]+"+1";
+		uchar t=a[i-1],k=1;
+		while (k<t/2&&g32[k+1]+g32[t-k-1]>=i)++k;
+		for (uint j=6;j<=g32[k];++j)
+			if (a[j]+a[i-j]<a[i])a[i]=a[j]+a[i-j],s[i]=s[j]+"+"+s[i-j];
+		for (uint j=2,ij=i*2;j<=i&&ij<=n;++j,ij+=i)
+			if (a[i]+a[j]<a[ij])a[ij]=a[i]+a[j],s[ij]="("+s[i]+")*("+s[j]+")";
 	}
 }
 template<class T>
@@ -184,6 +200,8 @@ vector<T> get_factors(T x){
 }
 ushort dfs(ull x,ushort t){
 	if (x<=n0)return a[x];
+	auto it=H.find(x);
+	if (it!=H.end()&&it->second.first>=t)return it->second.second;
 	++CNT;
 	if (clock()-T0>60000){
 		printf("time=%d CNT=%I64d\n",clock()-T0,CNT);
@@ -194,8 +212,6 @@ ushort dfs(ull x,ushort t){
 		if (P1.size()>5000000)P1.clear();
 		if (M_primes.size()>10000000)M_primes.clear();*/
 	}
-	auto it=H.find(x);
-	if (it!=H.end()&&it->second.first>=t)return it->second.second;
 	ushort ans=inf1,k=1;
 	while (k<t/2&&g[k+1]+g[t-k-1]>=x)++k;
 	assert(g[k]<=n0);
@@ -263,10 +279,70 @@ ushort calc_single(u128 n){  //compute f(n)
 	return ans;
 }
 
-void init(uint _n0=1e9,u128 _N0=1e23){
+void dfs128_print(u128 x,ushort t){  //print the formula for f(x).
+	if (x<=n0){
+		printf("(");
+		cout<<s[x];
+		//print(x);
+		printf(")");
+		return;
+	}
+	//if (x<U)return dfs(x,t);
+	ushort ans=inf1,k=1;
+	while (k<t/2&&g[k+1]+g[t-k-1]>=x)++k;
+	assert(g[k]<=n0);
+	for (int i=1;i<=g[k];++i){
+		ushort lb=complexity_LB(x-i);
+		if (a[i]+lb<=t){
+			auto v=dfs128(x-i,t-a[i]);
+			ans=min(ans,ushort(v+a[i]));
+			if (v+a[i]==t){
+				printf("(");
+				dfs128_print(x-i,v);
+				printf("+%s)",s[i].c_str());
+				return;
+			}
+		}
+	}
+	auto fac=get_factors(x);
+	for (auto &g:fac)
+		if (g>1&&g<=x/g){
+			ushort lb1=complexity_LB(g),lb2=complexity_LB(x/g);
+			if (lb1+lb2>t)continue;
+			/*if (t-complexity_LB(x)>=3){
+				if (dfs128(x/g,lb2)>lb2)++lb2;
+				if (lb1+lb2>t)continue;
+			}*/
+			//ushort v1=dfs128(g,t-lb2);
+			ushort v1=inf1;
+			for (int i=lb1;i<=t-lb2&&i<v1;++i){
+				v1=min(v1,dfs128(g,i));
+			}
+			if (v1+lb2>t)continue;
+			ushort v2=dfs128(x/g,t-v1);
+			ans=min(ans,ushort(v1+v2));
+			if (v1+v2==t){
+				printf("(");
+				dfs128_print(x/g,v2);
+				printf("*");
+				dfs128_print(g,v1);
+				printf(")");
+				return;
+			}
+		}
+}
+void print_expr(u128 x,ushort t=0){
+	int ans=t?t:calc_single(x);
+	print(x); cout<<" "<<ans<<":"<<endl;
+	dfs128_print(x,ans);
+	cout<<endl;
+}
+
+void init(uint _n0=1e9,u128 _N0=1e23,bool print=0){
 	int t1=clock();
 	n0=_n0; N0=_N0;
-	calc_all(n0);
+	if (!print)calc_all(n0);
+	else calc_all_print(n0);
 	printf("init time=%d\n",clock()-t1);
 }
 void clear(){
@@ -476,12 +552,16 @@ int main()
 	
 	//init(1e6,1e18);
 	//init(1e7,1e30);
-	init(1e8,1e38);
+	init(1e7,1e38,1);
 	//init(1e9,1e38);
 	//init(1e9,1e20);
 	//init(2e9,1e35);
 	
-	check1();
+	//print_expr(u128_from_str("1234567890"));
+	print_expr(u128_from_str("151770612880318395249730891"),179);
+	//print_expr(u128_from_str("1361788799550131972374553991985921"),227);
+	
+	//check1();
 	//check2();
 	//check3();
 	//check4();
