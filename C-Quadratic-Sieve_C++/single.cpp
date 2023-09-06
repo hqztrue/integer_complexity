@@ -550,8 +550,8 @@ void test(){
 }
 int main()
 {
-	//srand(time(0));
-	srand(1);
+	srand(time(0));
+	//srand(1);
 	//u128 N0=1; //N0<<=120;
 	//for (int i=1;i<=23;++i)N0*=10;
 	
@@ -562,15 +562,15 @@ int main()
 	//init(1e6,1e18);
 	//init(1e7,1e30);
 	init(1e7,1e38,1);
+	//init(1e8,1e38);
 	//init(1e9,1e38);
-	//init(1e9,1e20);
-	//init(2e9,1e35);
+	//init(2e9,1e38);
 	
 	//print_expr(u128_from_str("1234567890"));
 	//print_expr(u128_from_str("151770612880318395249730891"),179);
-	print_expr(u128_from_str("1361788799550131972374553991985921"),227);
+	//print_expr(u128_from_str("1361788799550131972374553991985921"),227);
 	
-	//check1();
+	check1();
 	//check2();
 	//check3();
 	//check4();

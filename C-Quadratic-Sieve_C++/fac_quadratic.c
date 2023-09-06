@@ -224,7 +224,10 @@ void preparation_part_4(qs_sheet *qs) {
 	mem = qs->mem.base = calloc(1, qs->mem.bytes_allocated);
 	assert(mem);
 
-	if (qs->caller->params->qs_rand_seed) srand(qs->rand_seed = qs->caller->params->qs_rand_seed);
+	if (qs->caller->params->qs_rand_seed) {
+		assert(0);
+		srand(qs->rand_seed = qs->caller->params->qs_rand_seed);
+	}
 	else qs->caller->params->qs_rand_seed = qs->rand_seed = add_rand_seed(&mem);
 
 	// kN was computed into the caller's courtesy memory, now the QS has parametrized and "allocated"
