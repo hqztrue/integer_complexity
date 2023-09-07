@@ -557,8 +557,7 @@ int main()
 {
 	srand(time(0));
 	//srand(1);
-	//u128 N0=1; //N0<<=120;
-	//for (int i=1;i<=23;++i)N0*=10;
+	//u128 N0=pow128(10,23);
 	
 	//verify();
 	//factorize_test(1e18,1e3);
@@ -583,8 +582,8 @@ int main()
 	
 	vector<double> a;
 	for (int T=1;;++T){
-		N0=1e23;
-		int num_samples=2e2;
+		N0=pow128(10,14);
+		int num_samples=5e3;
 		double res=run_sample(num_samples,1);
 		a.push_back(res);
 		printf("--------T=%d #samples=%d %.6lf--------\n",T,T*num_samples,mean(a));

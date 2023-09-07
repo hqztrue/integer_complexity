@@ -89,3 +89,9 @@ template<class T,class ...U> void prln(const T &t,const U&... u){
 }
 #endif
 
+u128 pow128(u128 x,int y){
+	u128 ans=1;
+	for (int i=1;i<=y;++i)ans*=x;
+	return ans;
+}
+
