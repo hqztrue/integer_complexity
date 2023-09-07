@@ -116,12 +116,12 @@ class Int{
 		while (res.len>1&&!res.a[res.len-1])--res.len;
 		return res;
 	}
-	Int operator %(int x){
+	value operator %(int x){
 		value d=0;if (x<0)x=-x;
 		for (int i=len-1;i>=0;--i)d=(d*base+a[i])%x;
 		return d;
 	}
-	Int operator %(ll x){
+	value operator %(ll x){
 		value d=0;if (x<0)x=-x;
 		for (int i=len-1;i>=0;--i)d=((__int128)d*base+a[i])%x;
 		return d;
@@ -222,6 +222,10 @@ class Int{
 	}
 	void set_basel(int _l){
 		size_t _base=1;while (_l--)_base*=10;set_base(_base);
+	}
+	int to_int()const{
+		assert(len==1);
+		return a[0];
 	}
 	void read(){
 		vector<char> s;char ch;
