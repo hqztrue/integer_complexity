@@ -1,6 +1,6 @@
 #include "../C-Quadratic-Sieve_C++/utils.h"
 struct Int{
-	const static int N0=100005,N=N0/32+1;
+	const static int N0=1005,N=N0/32+1;
 	const uint mask=0x55555555u;
 	uint a[N];
 	int mod2,mod3,cur_w,cur_b;
