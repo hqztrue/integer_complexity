@@ -22,7 +22,8 @@ struct Int{
 	}
 	void div2(){
 		if (++cur_b==32)cur_b=0,++cur_w;
-		mod3=((-(mod3-mod2))%3+3)%3;
+		mod3=3-mod3+mod2;
+		if (mod3>=3)mod3-=3;
 		mod2=(a[cur_w]>>cur_b)&1;
 	}
 	// set N0 to be slightly larger than log_2(base), so will only introduce
