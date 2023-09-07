@@ -268,7 +268,7 @@ class Int{
 		}
 		return out;
 	}
-	private:
+	//private:
 	value *a,base;int len;bool sign;  //0="-"
 	size_t get_basel()const{
 		size_t res=0;for (int b=base/10;b>=1;b/=10,++res);

@@ -40,7 +40,7 @@ int calc(Int x){
 	for (int j=0;j<=n2;++j){
 		Int v=x;
 		for (int i=0;i<=n1;++i){
-			f[i+1][j]=min(f[i+1][j],f[i][j]+int(v%2));
+			f[i+1][j]=min(f[i+1][j],f[i][j]+int(v.a[0]%2));
 			f[i][j+1]=min(f[i][j+1],f[i][j]+int(v%3));
 			v/=2;
 		}
@@ -50,15 +50,17 @@ int calc(Int x){
 }
 int main(){
 	srand(time(0));
+	int t1=clock();
 	//n1=9; n2=8;
 	//n1=11; n2=9;
 	n1=n2=100;
-	int T=1000; double s=0;
+	int T=100; double s=0;
 	pre();
 	for (int i1=1;i1<=T;++i1)s+=calc(rand_Int(n1));
 	s/=T; s+=2*n1+3*n2;
 	s/=(n1*log(2)+n2*log(3))/log(3);
-	printf("%.6lf\n",s);
+	printf("T=%d ave=%.6lf\n",T,s);
+	printf("time=%d\n",clock()-t1);
 	return 0;
 }
 
