@@ -4,14 +4,14 @@
 
 typedef __uint128_t positive_number;
 
-static positive_number multiplication_modulo(positive_number a, positive_number b, const positive_number mod) {
+static positive_number multiplication_modulo(positive_number a, positive_number b, const positive_number mod) {  //slow a*b%mod for 128 bits
     positive_number res = 0, tmp;
     for (b %= mod; a; a & 1 ? b >= mod - res ? res -= mod : 0, res += b : 0, a >>= 1, (tmp = b) >= mod - b ? tmp -= mod : 0, b += tmp);
     return res % mod;
 }
 
 
-struct u256{
+struct u256{  //simulating u256 by two u128's.
 	typedef unsigned long long ull;
 	typedef unsigned __int128 u128;
 	u128 h,l;
@@ -82,14 +82,15 @@ u128 diff128(u128 a, u128 b) {
     return a > b ? a - b : b - a;
 }
 
-unordered_map<u128,u128> P1;
+unordered_map<u128,u128> P1;  //memoization for find_factor128()
 const int M = 512;  //1024
 const int p[]={2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,
 	67,71,73,79,83,89,97,101,103,107,109,113,127,131,137,139,149,
 	151,157,163,167,173,179,181,191,193,197,199,211,223,227,229,
 	233,239,241,251,257,263,269,271};
 
-u128 find_factor128(u128 n, u128 x0 = 2, u128 a = 1) {
+//modified from https://en.algorithmica.org/hpc/algorithms/factorization/. fixed errors and extended to u128.
+u128 find_factor128(u128 n, u128 x0 = 2, u128 a = 1) {  //finding factors for 128 bits, by pollard-rho (faster version).
 	auto it=P1.find(n);
 	if (it!=P1.end())return it->second;
 	for (int i=0;i<50;++i)if (n%p[i]==0)return p[i];
@@ -130,8 +131,8 @@ u128 find_factor128(u128 n, u128 x0 = 2, u128 a = 1) {
 }
 
 
-unordered_map<u128,bool> M_primes;
-static bool is_prime(positive_number n, int k) {
+unordered_map<u128,bool> M_primes;  //memoization for is_prime()
+static bool is_prime(positive_number n, int k) {  //checking primality for 128 bits, by Miller-Rabin.
     positive_number a = 0, b, c, d, e, f, g; int h, i;
     if ((n == 1) == (n & 1)) return n == 2;
     if (n < 4669921) // fast constexpr for small primes (this line is removable).
@@ -159,7 +160,7 @@ static bool is_prime(positive_number n, int k) {
     return M_primes[n]=1;
 }
 
-positive_number factor_worker(const positive_number n) {
+positive_number factor_worker(const positive_number n) {  //finding factors for 128 bits, by pollard-rho (old version in C-RHO-128).
 	auto it=P1.find(n);
 	if (it!=P1.end())return it->second;
 	for (int i=0;i<50;++i)if (n%p[i]==0)return p[i];
@@ -175,14 +176,14 @@ positive_number factor_worker(const positive_number n) {
         }
         //c = multiplication_modulo(c, c, n);
 		c=m.multiply(c,c);
-        for (++c, c *= c != n, e = n, f = c > d ? c - d : d - c; (f %= e) && (e %= f););  // gcd
+        for (++c, c *= c != n, e = n, f = c > d ? c - d : d - c; (f %= e) && (e %= f););  // gcd (slow)
     } while ((f |= e) == 1);
 	if (f!=1&&f!=n)P1[n]=f;
     return f;
 }
 
 // fill the given array with prime factors of n, result will be zero terminated.
-positive_number * factor(positive_number n, positive_number *array) {
+positive_number * factor(positive_number n, positive_number *array) {  //factorize 128 bits
     positive_number a, b; size_t s ;
     do  if (n < 4)
             *array++ = n, n = 1;

@@ -1,8 +1,8 @@
 # *.cpp
 # *.c
+# *.py
 
 *.exe
-C-Quadratic-Sieve_C++/data.txt
 /results
 /test
 /others

@@ -1,3 +1,5 @@
+// https://judge.yosupo.jp/submission/107098
+
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned int uint;
@@ -910,8 +912,8 @@ u64 ecm(u64 n)
     }
 }
 
-unordered_map<u64,u64> P;
-u64 find_prime_factor(u64 n)
+unordered_map<u64,u64> P;  //memoization for find_prime_factor()
+u64 find_prime_factor(u64 n)  //factorize for 64 bits.
 {
 	u64 n0=n;
 	auto it=P.find(n);
@@ -992,5 +994,4 @@ u64 *factorize(u64 n)
 }
 
 #pragma endregion prime factorization
-// https://judge.yosupo.jp/submission/107098
 
