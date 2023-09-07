@@ -39,13 +39,14 @@ double run(int T=1){
 }
 int main(){
 	srand(time(0));
-	//n1=9; n2=8;
+	n1=9; n2=8;
 	//n1=11; n2=9;
-	n1=n2=30000;
+	//n1=9; n2=9;
+	//n1=n2=30000;
 	//n1=1000; n2=800;
 	vector<double> a;
 	for (int i1=1;;++i1){
-		int T=1;
+		int T=1000;
 		double ans=run(T);
 		a.push_back(ans);
 		printf("--------i1=%d #samples=%d %.6lf--------\n",i1,i1*T,mean(a));
