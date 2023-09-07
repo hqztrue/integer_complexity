@@ -1,3 +1,12 @@
+#ifndef __UTILS__
+#define __UTILS__
+typedef unsigned char uchar;
+typedef unsigned short ushort;
+typedef unsigned int uint;
+typedef long long ll;
+typedef unsigned long long ull;
+typedef unsigned __int128 u128;
+
 // provided for convenience, take a string and return a 128-bit unsigned integer.
 __uint128_t from_string_128_bits(const char *str) {
     __uint128_t res = 0;
@@ -31,13 +40,13 @@ void println(u128 x){print(x); putchar('\n');}
 u128 u128_from_str(const char *s){u128 x=0; while (*s)x=x*10+*s++-'0'; return x;}
 
 //inline u128 _rand128(){static u128 x=u128_from_str("199609092119960909211996090921996090921");x+=(x<<17)+(x>>29)+1;return x;}
-inline int rand32(){  //31 bits
+inline uint rand32(){  //32 bits
 #ifdef _WIN32
 	//assert(RAND_MAX==32767);
-	return ((rand()&1)<<30)+(rand()<<15)+rand();
+	return ((uint)rand()<<30)+(rand()<<15)+rand();
 #else
 	//assert(RAND_MAX==2147483647);
-	return rand();
+	return ((uint)rand()<<31)+rand();
 #endif
 }
 inline ull rand64(){  //64 bits
@@ -95,4 +104,6 @@ u128 pow128(u128 x,int y){
 	for (int i=1;i<=y;++i)ans*=x;
 	return ans;
 }
+
+#endif //__UTILS__
 

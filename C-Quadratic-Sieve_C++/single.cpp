@@ -13,10 +13,10 @@
 //#include<omp.h>
 #include<bits/stdc++.h>
 using namespace std;
+#include "utils.h"
 #include "factorization.h"  // pollard-rho for <62 bits
 #include "statistics.h"
 #include "allocator.h"
-#include "utils.h"
 #include "c_rho-128-bits.h"
 
 const uchar inf=127;
