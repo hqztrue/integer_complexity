@@ -1,5 +1,7 @@
 #include<bits/stdc++.h>
 using namespace std;
+#include "Int.h"
+
 typedef unsigned long long ull;
 const int N=105;
 int f[N][N],n1,n2;
@@ -45,7 +47,7 @@ int main(){
 	n1=n2=23;
 	int T=10000; double s=0;
 	pre();
-	for (int i1=1;i1<=T;++i1)s+=calc(rand64());
+	for (int i1=1;i1<=T;++i1)s+=calc(rand64()%(pow2[n1]*pow3[n2]));
 	s/=T; s+=2*n1+3*n2;
 	s/=(n1*log(2)+n2*log(3))/log(3);
 	printf("%.6lf\n",s);

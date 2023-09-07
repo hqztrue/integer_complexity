@@ -53,6 +53,7 @@ inline u128 rand128(){  //128 bits
 	return ((u128)rand64()<<64)+rand64();
 }
 
+//print functions
 string to_string(char c){return string(1,c);}
 string to_string(const char *s){return (string)s;}
 string to_string(const string &s){return s;}
