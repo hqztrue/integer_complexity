@@ -9,13 +9,12 @@ const int N=100005;
 int _f[2][N],n1,n2;  //base=2^n1*3^n2.
 inline void upd(int &x,int y){if (y<x)x=y;}
 int calc(Int &x){
-	int *f=_f[0],*f1=_f[1];
+	int *f=_f[0],*f1=_f[1]; Int v;
 	memset(f,0x3f,sizeof(int)*(n1+1));
 	f[0]=0;
 	for (int i=0;i<=n2;++i){
 		memset(f1,0x3f,sizeof(int)*(n1+1));
-		Int v=x;
-		v.init_div2();
+		v=x; v.init_div2();
 		//f[j]: already divided by i 3's, and j 2's.
 		for (int j=0;j<=n1;++j){
 			upd(f[j+1],f[j]+v.mod2);
@@ -45,9 +44,10 @@ int main(){
 	//n1=11; n2=9;
 	//n1=9; n2=9;
 	//n1=n2=30000;
+	Int::N=(n1*log(2)+n2*log(3))/log(2)/32+5;
 	vector<double> a;
 	for (int i1=1;;++i1){
-		int T=10000;
+		int T=1000000;
 		double ans=run(T);
 		a.push_back(ans);
 		printf("--------i1=%d #samples=%d %.6lf--------\n",i1,i1*T,mean(a));

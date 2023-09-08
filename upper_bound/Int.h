@@ -1,9 +1,14 @@
 #include "../C-Quadratic-Sieve_C++/utils.h"
 struct Int{
-	const static int N0=100005,N=N0/32+1;
+	const static int N0=30015;
 	const uint mask=0x55555555u;
-	uint a[N];
+	static int N;
+	uint a[N0/32+1];
 	int mod2,mod3,cur_w,cur_b;
+	Int& operator =(const Int &A){
+		memcpy(a,A.a,sizeof(uint)*N);
+		return *this;
+	}
 	Int& operator /=(int x){
 		ull d=0;
 		for (int i=N-1;i>=0;--i)
@@ -33,4 +38,5 @@ struct Int{
 		for (int i=0;i<N;++i)a[i]=rand32();
 	}
 };
+int Int::N;
 
