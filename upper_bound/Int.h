@@ -15,17 +15,19 @@ struct Int{
 		cur_w=cur_b=0;
 		mod3=0;
 		for (int i=0;i<N;++i){
+			//binary bits at even locations contribute 1 to mod 3,
+			//and odd locations contribute -1.
 			mod3+=__builtin_popcount(a[i]&mask);
 			mod3-=__builtin_popcount((a[i]>>1)&mask);
 		}
 		mod3=(mod3%3+3)%3;
 	}
-	void div2(){
+	void div2(){  //update mod2 and mod3 after dividing by 2.
 		if (++cur_b==32)cur_b=0,++cur_w;
 		mod3=(3-mod3+mod2)%3;
 		mod2=(a[cur_w]>>cur_b)&1;
 	}
-	// set N0 to be slightly larger than log_2(base), so will only introduce
+	// set N0 to be slightly larger than log_2(base), so it will only introduce
 	// small error, even if we don't restrict the rand value in [0,base).
 	void init_rand(){
 		for (int i=0;i<N;++i)a[i]=rand32();

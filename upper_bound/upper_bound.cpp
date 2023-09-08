@@ -1,3 +1,4 @@
+//Complexity: O(n^2) per sample.
 #include<bits/stdc++.h>
 using namespace std;
 #include "../C-Quadratic-Sieve_C++/utils.h"
@@ -15,6 +16,7 @@ int calc(Int &x){
 		memset(f1,0x3f,sizeof(int)*(n1+1));
 		Int v=x;
 		v.init_div2();
+		//f[j]: already divided by i 3's, and j 2's.
 		for (int j=0;j<=n1;++j){
 			upd(f[j+1],f[j]+v.mod2);
 			upd(f1[j],f[j]+v.mod3);
@@ -39,15 +41,13 @@ double run(int T=1){
 }
 int main(){
 	srand(time(0));
-	//n1=9; n2=8;
-	//n1=8; n2=9;
+	n1=9; n2=8;
 	//n1=11; n2=9;
 	//n1=9; n2=9;
-	n1=n2=30000;
-	//n1=1000; n2=100;
+	//n1=n2=30000;
 	vector<double> a;
 	for (int i1=1;;++i1){
-		int T=1;
+		int T=10000;
 		double ans=run(T);
 		a.push_back(ans);
 		printf("--------i1=%d #samples=%d %.6lf--------\n",i1,i1*T,mean(a));

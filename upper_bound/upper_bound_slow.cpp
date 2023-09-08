@@ -1,3 +1,4 @@
+//Complexity: O(n^3/w) per sample.
 #include<bits/stdc++.h>
 using namespace std;
 #include "../C-Quadratic-Sieve_C++/utils.h"
@@ -6,23 +7,18 @@ using namespace std;
 
 typedef unsigned long long ull;
 const int N=5005;
-int f[N][N],n1,n2;
-//Int pow2[N],pow3[N];
+int f[N][N],n1,n2;  //base=2^n1*3^n2.
 Int rand_Int(int n){  //rand Int with n digits
 	Int x=0;
 	for (int i=0;i<n;++i)x=x*10+rand64()%10;
 	return x;
 }
-/*void pre(){
-	pow2[0]=pow3[0]=1;
-	for (int i=1;i<=n1;++i)pow2[i]=pow2[i-1]*2;
-	for (int i=1;i<=n2;++i)pow3[i]=pow3[i-1]*3;
-}*/
 int calc(Int x){
 	for (int i=0;i<=n1;++i)memset(f[i],0x3f,sizeof(int)*(n2+1));
 	f[0][0]=0;
 	for (int j=0;j<=n2;++j){
 		Int v=x;
+		//f[i][j]: already divided by i 2's, and j 3's.
 		for (int i=0;i<=n1;++i){
 			f[i+1][j]=min(f[i+1][j],f[i][j]+int(v.a[0]%2));
 			f[i][j+1]=min(f[i][j+1],f[i][j]+int(v%3));
@@ -34,8 +30,13 @@ int calc(Int x){
 }
 double run(int T=100){
 	int t1=clock();
-	double s=0; //pre();
-	for (int i1=1;i1<=T;++i1)s+=calc(rand_Int(n1));
+	double s=0;
+	for (int i1=1;i1<=T;++i1){
+		// set x to be moderately larger than base, so it will only introduce
+		// small error, even if we don't restrict the rand value in [0,base).
+		Int x=rand_Int(max(n1,n2));
+		s+=calc(x);
+	}
 	s/=T; s+=2*n1+3*n2;
 	s/=(n1*log(2)+n2*log(3))/log(3);
 	printf("n1=%d n2=%d T=%d ave=%.6lf\n",n1,n2,T,s);
