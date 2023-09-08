@@ -12,11 +12,11 @@ The theoretical running time of the single-target algorithm is $O(n^{0.6154})$. 
 1. $f(2^i)=2i$?
 2. $f(2^i3^j5^k)=2i+3j+5k$ ($k\leq 5$)?
 3. $f(2^i+1)=2i+1$? (except 3 and 9)
-4. $f(p^i)=i\cdot f(p)$, for $p=577,811,109,433,163,487,2$?
+4. $f(p^i)=i\cdot f(p)$, for $p=109,433,163,487,2$?
 
 
 # Implementations
-For integers within long long ($\sim 2^{63}$): see [integer_complexity_single_2i3j5k.cpp](https://github.com/hqztrue/integer_complexity/blob/main/integer_complexity_single_2i3j5k.cpp).  
+For integers within long long ($\sim 2^{63}$): see [integer_complexity_single_2i3j5k.cpp](https://github.com/hqztrue/integer_complexity/blob/main/old/integer_complexity_single_2i3j5k.cpp).  
 
 For larger integers, see [single.cpp](https://github.com/hqztrue/integer_complexity/blob/main/C-Quadratic-Sieve_C%2B%2B/single.cpp). It used [C-RHO](https://github.com/michel-leonard/C-RHO) and [C-Quadratic-Sieve](https://github.com/michel-leonard/C-Quadratic-Sieve) for factoring.  
 Run [compile.bat]() to compile.
