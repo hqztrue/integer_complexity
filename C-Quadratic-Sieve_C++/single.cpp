@@ -388,8 +388,7 @@ void check1(){  // test the conjecture f(p^i)=i*f(p). (In particular, f(2^i)=2i.
 			//if (i<80)continue;
 			u128 n=x;
 			//printf("i=%d n=%I64d\n",i,n);
-			int v=i*a[mul],lb=complexity_LB(n);  // v: the conjectured complexity. d: defect.
-			//printf("def=%d\n",d);
+			int v=i*a[mul],lb=complexity_LB(n);  // v: the conjectured complexity.
 			int ans=v;
 			for (int t=lb;t<v;++t){
 				int res=dfs128(n,t);
@@ -430,14 +429,17 @@ void check2(){  // test the conjecture f(2^i3^j5^k)=2i+3j+5k (k<=5).
 				u128 n=x*y*z;
 				if (n>N0)break;
 				if (n==1)continue;
-				if (i<60||i==60&&j<3||i==60&&j==3&&k<5)continue;
-				//if (i<58)continue;
+				//if (i<60||i==60&&j<3||i==60&&j==3&&k<5)continue;
 				printf("i=%d j=%d k=%d ",i,j,k); println(n);
-				int v=i*2+j*3+k*5,d=defect_approx(n,v-1);
-				int ans=dfs128(n,d);
-				if (ans<v){
-					printf("err: %d %d",ans,v); println(n);
-					exit(0);
+				int v=i*2+j*3+k*5,lb=complexity_LB(n);
+				int ans=v;
+				for (int t=lb;t<v;++t){
+					int res=dfs128(n,t);
+					ans=min(ans,res);
+					if (ans<v){
+						printf("improve: %d %d\n",ans,v); println(n);
+						break;
+					}
 				}
 			}
 		}
@@ -452,12 +454,19 @@ void check3(){  // test the conjecture f(2^i+1)=2i+1.
 		u128 x=mul;
 		for (int i=1;;++i,x*=mul){
 			if (i==3||i==9)continue;
-			if (i<=76)continue;
+			//if (i<=76)continue;
 			u128 n=x+1;
 			//printf("i=%d n=%I64d\n",i,n);
-			int v=i*2+1,d=defect_approx(n,v-1);
-			printf("def=%d\n",d);
-			int ans=dfs128(n,d);
+			int v=i*2+1,lb=complexity_LB(n);
+			int ans=v;
+			for (int t=lb;t<v;++t){
+				int res=dfs128(n,t);
+				ans=min(ans,res);
+				if (ans<v){
+					printf("improve: %d %d\n",ans,v);
+					break;
+				}
+			}
 			printf("i=%d ans=%d\n",i,ans);
 			//printf("time=%d\n",clock()-t1);
 			//printf("size=%d\n",H.size());
@@ -475,23 +484,20 @@ void check3(){  // test the conjecture f(2^i+1)=2i+1.
 }
 void check4(){  // test the conjecture f(3p)=min{f(3p-1)+1,f(p)+3} for prime p, by sampling a few integers.
 	int t1=clock();
-	u128 U=1e20,u=rand128()%U+1;
-	//u=U;
-	const int d=7;
-	for (u128 p=u;;){
-		//++p;
-		p=rand128()%U+1;
-		if (!is_prime_slow(p))continue;
+	u128 U=1e22;
+	for (u128 p;;){
+		p=rand128()%U+1; //++p;
+		if (!is_prime128(p))continue;
 		printf("p="); println(p);
-		auto v1=dfs128(p*3-1,d),v2=dfs128(p,d),v3=dfs128(p*3,d);
+		auto v1=calc_single(p*3-1),v2=calc_single(p),v3=calc_single(p*3);
 		//println(v1); println(v2); println(v3);
 		if (min(v1+1,v2+3)!=v3){
 			printf("err: p=",p); println(p);
 			printf("3p="); println(p*3);
 			printf(" f(3p-1)=%d f(p)=%d f(3p)=%d\n",v1,v2,v3);
-			//exit(0);
-			break;
+			for (;;); //exit(0); //break;
 		}
+		clear_hash();
 	}
 	printf("time=%d\n",clock()-t1);
 }
@@ -589,11 +595,11 @@ int main()
 	
 	//check1();
 	//check2();
-	//check3();
+	check3();
 	//check4();
 	//run_sample(1e4);
 	
-	vector<double> a;
+	/*vector<double> a;
 	for (int T=1;;++T){
 		N0=pow128(10,18);
 		int num_samples=10;
@@ -601,7 +607,7 @@ int main()
 		a.push_back(res);
 		printf("--------T=%d #samples=%d %.6lf--------\n",T,T*num_samples,mean(a));
 		//return 0;
-	}
+	}*/
 	/*for (u128 i=1;i<=1e30;i*=10){
 		if (i<=1e10)continue;
 		N0=i;

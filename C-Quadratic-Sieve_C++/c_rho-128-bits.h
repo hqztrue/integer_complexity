@@ -94,7 +94,7 @@ u128 find_factor128(u128 n, u128 x0 = 2, u128 a = 1) {  //finding factors for 12
 	auto it=P1.find(n);
 	if (it!=P1.end())return it->second;
 	for (int i=0;i<50;++i)if (n%p[i]==0)return p[i];
-	/*if (is_prime(n)||n==1){
+	/*if (is_prime128(n)||n==1){
 		P1[n]=n;
 		return n;
 	}*/
@@ -131,8 +131,8 @@ u128 find_factor128(u128 n, u128 x0 = 2, u128 a = 1) {  //finding factors for 12
 }
 
 
-unordered_map<u128,bool> M_primes;  //memoization for is_prime()
-static bool is_prime(positive_number n, int k) {  //checking primality for 128 bits, by Miller-Rabin.
+unordered_map<u128,bool> M_primes;  //memoization for is_prime128()
+static bool is_prime128(positive_number n, int k=48) {  //checking primality for 128 bits, by Miller-Rabin.
     positive_number a = 0, b, c, d, e, f, g; int h, i;
     if ((n == 1) == (n & 1)) return n == 2;
     if (n < 4669921) // fast constexpr for small primes (this line is removable).
@@ -195,7 +195,7 @@ positive_number * factor(positive_number n, positive_number *array) {  //factori
                 array += s + s ;
                 n = 1;
             } else {
-				bool flag=is_prime(n, 48); // number of Miller-Rabin tests.
+				bool flag=is_prime128(n, 48); // number of Miller-Rabin tests.
                 if (flag)*array++ = n, n = 1;
                 else {
                     //a = factor_worker(n); // factor_worker can't be called with a prime.
@@ -227,7 +227,7 @@ int _main(){
         for(j = 0; factors[j + 1]; ++j) {
             printf("%s * ", to_string_128_bits(factors[j]));
             assert(n % factors[j] == 0);
-            assert(is_prime(factors[j], 72));
+            assert(is_prime128(factors[j], 72));
         }
         printf("%s\n", to_string_128_bits(factors[j]));
     }

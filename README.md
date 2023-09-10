@@ -25,8 +25,7 @@ Run [compile.bat]() to compile.
 
 
 # Upper Bound
-Computes an upper bound for the integer complexity, that holds for a set of numbers with natural density 1 (w.h.p. correct).
-
+We designed a more efficient algorithm that can compute an upper bound for the integer complexity, which holds for a set of numbers with natural density 1. The result is correct with high probability.
 [upper_bound_slow.cpp](https://github.com/hqztrue/integer_complexity/blob/main/upper_bound/upper_bound_slow.cpp): $O(n^3/w)$ per sample.
 
 [upper_bound.cpp](https://github.com/hqztrue/integer_complexity/blob/main/upper_bound/upper_bound.cpp): $O(n^2)$ per sample.
