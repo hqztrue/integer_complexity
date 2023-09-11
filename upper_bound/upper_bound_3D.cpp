@@ -51,8 +51,9 @@ int heuristic_solve(Int x){
 	return calc(x,n1,n2,n3);
 }
 void run(){
-	n1=100; n2=100; n3=15;
-	n1=1000; n2=1000; n3=150;
+	//n1=100; n2=100; n3=15;
+	n1=1000; n2=1100; n3=150;
+	//n1=2000; n2=2100; n3=300;
 	Int::N=(n1*log(2)+n2*log(3)+n3*log(p))/log(2)/32+5;
 	vector<double> a;
 	for (int i1=1;;++i1){
