@@ -1,10 +1,12 @@
 #include "../C-Quadratic-Sieve_C++/utils.h"
+
 struct Int{
 	const static int N0=300015;
 	const uint mask=0x55555555u;
+	const static int rem[];
 	static int N;
 	uint a[N0/32+1];
-	int mod2,mod3,cur_w,cur_b;
+	int mod2,mod3,mod5,sum[4],cur_w,cur_b;
 	Int& operator =(const Int &A){
 		memcpy(a,A.a,sizeof(uint)*N);
 		return *this;
@@ -15,6 +17,7 @@ struct Int{
 			d=(d<<32)+a[i],a[i]=d/x,d%=x;
 		return *this;
 	}
+	int at(int x)const{return (a[x/32]>>x%32)&1;}
 	void init_div2(){
 		mod2=a[0]&1;
 		cur_w=cur_b=0;
@@ -26,8 +29,21 @@ struct Int{
 			mod3-=__builtin_popcount((a[i]>>1)&mask);
 		}
 		mod3=(mod3%3+3)%3;
+		
+		for (int i=0;i<4;++i)sum[i]=0;
+		for (int i=0;i<N;++i)sum[i%4]+=at(i);
+		mod5=0;
+		for (int i=0;i<4;++i)mod5+=rem[i]*sum[i];
+		mod5%=5;
 	}
-	void div2(){  //update mod2 and mod3 after dividing by 2.
+	void div2(){  //update mod2, mod3 and mod5 after dividing by 2.
+		//sum[0]-=mod2;
+		int t=sum[0]; for (int i=0;i<3;++i)sum[i]=sum[i+1]; sum[3]=t;
+		mod5=0;
+		for (int i=0;i<4;++i)mod5+=rem[i]*sum[i];
+		assert(mod5>=0);
+		mod5%=5;
+		
 		mod3=(3-mod3+mod2)%3;
 		if (++cur_b==32)cur_b=0,++cur_w;
 		mod2=(a[cur_w]>>cur_b)&1;
@@ -48,5 +64,6 @@ struct Int{
 		for (int i=0;i<N;++i)a[i]=rand32();
 	}
 };
+const int Int::rem[]={1,2,4,3};
 int Int::N;
 

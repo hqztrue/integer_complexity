@@ -1,3 +1,4 @@
+//Complexity: O(n^4/w) per sample.
 #include<bits/stdc++.h>
 using namespace std;
 #include "../C-Quadratic-Sieve_C++/utils.h"
