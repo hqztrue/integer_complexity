@@ -8,6 +8,7 @@ using namespace std;
 typedef unsigned long long ull;
 const int N=5005;
 int f[N][N],n1,n2;  //base=2^n1*3^n2.
+inline void upd(int &x,int y){if (y<x)x=y;}
 Int rand_Int(int n){  //rand Int with n digits
 	Int x=0;
 	for (int i=0;i<n;++i)x=x*10+rand64()%10;
@@ -20,8 +21,8 @@ int calc(Int x){
 		Int v=x;
 		//f[i][j]: already divided by i 2's, and j 3's.
 		for (int i=0;i<=n1;++i){
-			f[i+1][j]=min(f[i+1][j],f[i][j]+int(v.a[0]%2));
-			f[i][j+1]=min(f[i][j+1],f[i][j]+int(v%3));
+			upd(f[i+1][j],f[i][j]+int(v.a[0]%2));
+			upd(f[i][j+1],f[i][j]+int(v%3));
 			v/=2;
 		}
 		x/=3;

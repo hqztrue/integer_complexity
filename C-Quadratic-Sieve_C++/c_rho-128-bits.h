@@ -101,9 +101,9 @@ u128 find_factor128(u128 n, u128 x0 = 2, u128 a = 1) {  //finding factors for 12
 	Montgomery128 m(n);
     while (1){
 	    u128 x = rand128()%n, c=n-(rand128()%(n-1)+1);
-	    for (int l = M; l < (1 << 30); l *= 2) {
+	    for (ull l = M; l < (1ull << 30); l *= 2) {  //1ull << 32
 	        u128 y = x, p = 1;
-	        for (int i = 0; i < l; i += M) {
+	        for (ull i = 0; i < l; i += M) {
 	            for (int j = 0; j < M; j++) {
 	                x = f128(x, c, m);
 	                //p = multiplication_modulo(p, diff128(x, y), n);

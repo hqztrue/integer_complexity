@@ -37,7 +37,7 @@ def f5(x,a,b,c):
 def f6(x,a,b,c):
 	return a/(x**1.5+b)+c
 
-f=f6
+f=f3
 
 popt,pcov=curve_fit(f,x,y,maxfev=100000)
 print('params=',popt)

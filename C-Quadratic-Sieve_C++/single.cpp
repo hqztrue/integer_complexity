@@ -380,7 +380,7 @@ void check1(){  // test the conjecture f(p^i)=i*f(p). (In particular, f(2^i)=2i.
 	//vector<int> primes={577,811,109};
 	//vector<int> primes={433,163,487,2};
 	//vector<int> primes={2};
-	vector<int> primes={577};
+	vector<int> primes={811};
 	for (auto mul:primes){
 		printf("mul=%I64d\n",mul);
 		u128 x=mul;
@@ -403,8 +403,8 @@ void check1(){  // test the conjecture f(p^i)=i*f(p). (In particular, f(2^i)=2i.
 			//printf("size=%d\n",H.size());
 			if (ans<v){
 				printf("err: %d^%d=",mul,i);
-				print(n);
-				printf(" ans=%d tgt=%d\n",ans,v);
+				println(n);
+				printf("ans=%d tgt=%d\n",ans,v);
 				//exit(0);
 				break;
 			}
@@ -429,18 +429,22 @@ void check2(){  // test the conjecture f(2^i3^j5^k)=2i+3j+5k (k<=5).
 				u128 n=x*y*z;
 				if (n>N0)break;
 				if (n==1)continue;
+				if (n<1e35)continue;
 				//if (i<60||i==60&&j<3||i==60&&j==3&&k<5)continue;
-				printf("i=%d j=%d k=%d ",i,j,k); println(n);
 				int v=i*2+j*3+k*5,lb=complexity_LB(n);
 				int ans=v;
 				for (int t=lb;t<v;++t){
 					int res=dfs128(n,t);
 					ans=min(ans,res);
 					if (ans<v){
-						printf("improve: %d %d\n",ans,v); println(n);
-						break;
+						printf("improve: %d %d\n",ans,v);
+						printf("n="); println(n);
+						for (;;);
+						//break;
 					}
 				}
+				printf("i=%d j=%d k=%d ans=%d\n",i,j,k,ans);
+				printf("n="); println(n);
 			}
 		}
 	}
@@ -585,7 +589,7 @@ int main()
 	//init(1e6,1e18);
 	//init(1e7,1e30);
 	//init(1e7,1e38,1);
-	init(1e8,1e38);
+	init(1e8,1e36);
 	//init(1e9,1e38);
 	//init(2e9,1e38);
 	
@@ -594,8 +598,8 @@ int main()
 	//print_expr(u128_from_str("1361788799550131972374553991985921"),227);
 	
 	//check1();
-	//check2();
-	check3();
+	check2();
+	//check3();
 	//check4();
 	//run_sample(1e4);
 	
