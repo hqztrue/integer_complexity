@@ -39,11 +39,7 @@ struct Int{
 	void div2(){  //update mod2, mod3 and mod5 after dividing by 2.
 		sum[0]-=mod2;
 		int t=sum[0]; for (int i=0;i<3;++i)sum[i]=sum[i+1]; sum[3]=t;
-		int m=(mod5-mod2+5)*3%5;
-		mod5=0;
-		for (int i=0;i<4;++i)mod5+=rem[i]*sum[i];
-		mod5%=5;
-		assert(mod5==m);
+		mod5=(mod5-mod2+5)*3%5;
 		
 		mod3=(3-mod3+mod2)%3;
 		if (++cur_b==32)cur_b=0,++cur_w;
