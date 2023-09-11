@@ -15,6 +15,7 @@ struct Int{
 			d=(d<<32)+a[i],a[i]=d/x,d%=x;
 		return *this;
 	}
+	int at(int x)const{return (a[x/32]>>x%32)&1;}
 	void init_div2(){
 		mod2=a[0]&1;
 		cur_w=cur_b=0;

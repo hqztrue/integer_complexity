@@ -6,8 +6,7 @@ using namespace std;
 #include "Int_3D.h"
 
 const int N=10005,N1=2005,p=5,fp=5;
-typedef int arr[N1][N];
-arr _f[2];
+int _f[2][N1][N];
 int n1,n2,n3;  //base=2^n1*3^n2*p^n3.
 inline void upd(int &x,int y){if (y<x)x=y;}
 int calc(Int x,int n1,int n2,int n3){
@@ -49,12 +48,12 @@ double run_sample(int T=1){
 	return calc(x,n,n);
 }*/
 void run(){
-	n1=100; n2=100; n3=1;
+	n1=100; n2=100; n3=15;
 	//n1=1000; n2=1000; n3=150;
 	Int::N=(n1*log(2)+n2*log(3)+n3*log(p))/log(2)/32+5;
 	vector<double> a;
 	for (int i1=1;;++i1){
-		int T=10;
+		int T=100;
 		double ans=run_sample(T);
 		a.push_back(ans);
 		printf("--------i1=%d #samples=%d %.6lf--------\n",i1,i1*T,mean(a));
