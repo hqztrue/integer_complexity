@@ -19,7 +19,7 @@ The theoretical running time of the single-target algorithm is $O(n^{0.6154})$. 
 ## Implementations
 For integers within long long ($\sim 2^{63}$): see [single64.cpp](https://github.com/hqztrue/integer_complexity/blob/main/old/single64.cpp).
 
-For larger integers, see [single.cpp](https://github.com/hqztrue/integer_complexity/blob/main/integer-complexity-128/single.cpp). It used [C-RHO](https://github.com/michel-leonard/C-RHO) and [C-Quadratic-Sieve](https://github.com/michel-leonard/C-Quadratic-Sieve) for factoring. It also supports printing the formulas.
+For larger integers within u128, see [single.cpp](https://github.com/hqztrue/integer_complexity/blob/main/integer-complexity-128/single.cpp). It used [C-RHO](https://github.com/michel-leonard/C-RHO) and [C-Quadratic-Sieve](https://github.com/michel-leonard/C-Quadratic-Sieve) for factoring. It also supports printing the formulas.
 
 Run [compile.bat]() to compile.
 
