@@ -589,7 +589,7 @@ int main()
 	//init(1e6,1e18);
 	//init(1e7,1e30);
 	//init(1e7,1e38,1);
-	init(1e8,1e36);
+	init(1e8,1e38);
 	//init(1e9,1e38);
 	//init(2e9,1e38);
 	
@@ -597,8 +597,8 @@ int main()
 	//print_expr(u128_from_str("151770612880318395249730891"),179);
 	//print_expr(u128_from_str("1361788799550131972374553991985921"),227);
 	
-	//check1();
-	check2();
+	check1();
+	//check2();
 	//check3();
 	//check4();
 	//run_sample(1e4);
