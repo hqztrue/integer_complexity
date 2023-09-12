@@ -3,6 +3,7 @@
 # *.py
 
 *.exe
+*.gch
 /results
 /test
 /others
