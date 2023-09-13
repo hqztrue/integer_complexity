@@ -1,8 +1,8 @@
 //Complexity: O(n^4/w) per sample.
 #include<bits/stdc++.h>
 using namespace std;
-#include "../C-Quadratic-Sieve_C++/utils.h"
-#include "../C-Quadratic-Sieve_C++/statistics.h"
+#include "../integer-complexity-128/utils.h"
+#include "../integer-complexity-128/statistics.h"
 #include "Int1.h"
 
 typedef unsigned long long ull;

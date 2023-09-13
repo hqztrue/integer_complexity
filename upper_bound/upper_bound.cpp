@@ -1,8 +1,8 @@
 //Complexity: O(n^2) per sample.
 #include<bits/stdc++.h>
 using namespace std;
-#include "../C-Quadratic-Sieve_C++/utils.h"
-#include "../C-Quadratic-Sieve_C++/statistics.h"
+#include "../integer-complexity-128/utils.h"
+#include "../integer-complexity-128/statistics.h"
 #include "Int.h"
 
 const int N=100005;
@@ -50,10 +50,11 @@ void run(){
 	Int::N=(n1*log(2)+n2*log(3))/log(2)/32+5;
 	vector<double> a;
 	for (int i1=1;;++i1){
-		int T=10;
+		int T=1;
 		double ans=run_sample(T);
 		a.push_back(ans);
-		printf("--------i1=%d #samples=%d %.6lf--------\n",i1,i1*T,mean(a));
+		double ave=mean(a),mu=stddev(a);
+		printf("--------i1=%d #samples=%d mean=%.6lf stddev=%.6lf--------\n",i1,i1*T,ave,mu);
 	}
 }
 void test_heuristic(){
@@ -72,7 +73,7 @@ void test_heuristic(){
 }
 int main(){
 	srand(time(0));
-	test_heuristic();
+	//test_heuristic();
 	run();
 	return 0;
 }

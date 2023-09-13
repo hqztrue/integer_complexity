@@ -1,13 +1,15 @@
 import math,scipy
 from scipy.stats import norm
 
+def conf_interval(a,n,sigma):
+	#d=5
+	d=norm.ppf(1-a/2)
+	#print('d=',d)
+	return 2*d*sigma/math.sqrt(n)
+
 a=1e-5
 
-n=20000; sigma=0.02
-#n=2000; sigma=0.017
-#n-=1
-
-d=norm.ppf(1-a/2)
-#d=5
-print('d=',d)
-print('confidence interval=',2*d*sigma/math.sqrt(n))
+print('1e24',conf_interval(a,20000,0.02))
+print('1e25',conf_interval(a,2000,0.017))
+print('D(b,r) (2,3)',conf_interval(a,10**5,0.0011))
+print('D(b,r) (2,3,5)',conf_interval(a,10**5,0.0026))

@@ -1,4 +1,4 @@
-#include "../C-Quadratic-Sieve_C++/utils.h"
+#include "../integer-complexity-128/utils.h"
 struct Int{
 	const static int N0=300015;
 	const uint mask=0x55555555u;

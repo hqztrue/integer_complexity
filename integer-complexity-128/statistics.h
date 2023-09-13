@@ -9,7 +9,7 @@ namespace statistics{
 	double variance(const vector<T> &a){
 		double ave=mean(a),s=0;
 		for (auto &x:a)s+=(x-ave)*(x-ave);
-		return s/a.size();
+		return s/a.size();  //s/(a.size()-1);
 	}
 	template<class T>
 	double stddev(const vector<T> &a){
