@@ -202,7 +202,7 @@ class Int{
 		if (len==1&&a[len]==0)*c1++='0';
 		if (sign==0)*c1++='-';*c1=0;reverse(c,c1);
 	}
-	void from_arr(char *c){
+	void from_arr(const char *c){
 		size_t base_l=get_basel(),b=1;int cl=strlen(c);value x=0;
 		New((cl+base_l-1)/base_l);len=0;
 		if (*c=='-')sign=0,++c,--cl;else sign=1;

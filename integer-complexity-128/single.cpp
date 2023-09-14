@@ -505,6 +505,37 @@ void check4(){  // test the conjecture f(3p)=min{f(3p-1)+1,f(p)+3} for prime p, 
 	}
 	printf("time=%d\n",clock()-t1);
 }
+void check5(){  // test the conjecture f(3^k*n)=f(n)+3k for n=73(3^21+1)+6=763605783898.
+	int t1=clock(),t0=t1;
+	u128 x=763605783898ull;
+	int fn=calc_single(x);  //fn=82
+	for (int i=0;;++i,x*=3){
+		u128 n=x;
+		int v=fn+i*3,lb=complexity_LB(n);  // v: the conjectured complexity.
+		int ans=v;
+		for (int t=lb;t<v;++t){
+			int res=dfs128(n,t);
+			ans=min(ans,res);
+			if (ans<v){
+				printf("improve: %d %d\n",ans,v);
+				break;
+			}
+		}
+		//int ans=calc_single(n);
+		printf("i=%d ans=%d\n",i,ans);
+		//printf("time=%d\n",clock()-t1);;
+		if (ans<v){
+			printf("err: n=");
+			println(n);
+			printf("ans=%d tgt=%d\n",ans,v);
+			//exit(0);
+			break;
+		}
+		printf("time=%d\n",clock()-t1); t1=clock();
+		if (n>N0/3)break;
+	}
+	printf("total time=%d\n",clock()-t0);
+}
 double run_sample(int num_samples=1e4,bool debug=1){  //computes the average integer complexity, by sampling.
 	//freopen("data.txt","w",stdout);
 	int t1=clock(),t2=t1;
@@ -601,6 +632,7 @@ int main()
 	//check2();
 	//check3();
 	//check4();
+	//check5();
 	//run_sample(1e4);
 	
 	/*vector<double> a;

@@ -37,10 +37,6 @@ double run_sample(int T=1){
 	printf("time=%d\n",clock()-t1);
 	return s;
 }
-int heuristic_solve(Int x){
-	int n=ceil(x.bit_length()/log2(6));
-	return calc(x,n,n);
-}
 void run(){
 	//n1=9; n2=8;
 	//n1=11; n2=9;
@@ -56,6 +52,10 @@ void run(){
 		double ave=mean(a),mu=stddev(a);
 		printf("--------i1=%d #samples=%d mean=%.6lf stddev=%.6lf--------\n",i1,i1*T,ave,mu);
 	}
+}
+int heuristic_solve(Int x){
+	int n=ceil(x.bit_length()/log2(6));
+	return calc(x,n,n);
 }
 void test_heuristic(){
 	//floor(pi*10^100)+10^1000
