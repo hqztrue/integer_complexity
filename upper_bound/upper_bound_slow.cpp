@@ -29,7 +29,7 @@ int calc(Int x){
 	}
 	return f[n1][n2];
 }
-double run(int T=100){
+double run_sample(int T=100){
 	int t1=clock();
 	double s=0;
 	for (int i1=1;i1<=T;++i1){
@@ -44,8 +44,7 @@ double run(int T=100){
 	printf("time=%d\n",clock()-t1);
 	return s;
 }
-int main(){
-	srand(time(0));
+void run(){
 	//n1=9; n2=8;
 	//n1=11; n2=9;
 	//n1=n2=1000;
@@ -53,10 +52,15 @@ int main(){
 	vector<double> a;
 	for (int i1=1;;++i1){
 		int T=10;
-		double ans=run(T);
+		double ans=run_sample(T);
 		a.push_back(ans);
-		printf("--------i1=%d #samples=%d %.6lf--------\n",i1,i1*T,mean(a));
+		double ave=mean(a),mu=stddev(a);
+		printf("--------i1=%d #samples=%d mean=%.6lf stddev=%.6lf--------\n",i1,i1*T,ave,mu);
 	}
+}
+int main(){
+	srand(time(0));
+	run();
 	return 0;
 }
 
