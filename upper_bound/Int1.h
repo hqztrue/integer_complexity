@@ -199,7 +199,7 @@ class Int{
 		for (int i=0;i<len-1;++i)
 			for (value x=a[i],b=base/10;b>=1;b/=10)*c1++='0'+x%10,x/=10;
 		for (value x=a[len-1];x>0;x/=10)*c1++='0'+x%10;
-		if (len==1&&a[len]==0)*c1++='0';
+		if (len==1&&a[0]==0)*c1++='0';
 		if (sign==0)*c1++='-';*c1=0;reverse(c,c1);
 	}
 	void from_arr(const char *c){
@@ -224,6 +224,12 @@ class Int{
 	int to_int()const{
 		assert(len==1);
 		return a[0];
+	}
+	int size()const{
+		if (len==1&&a[0]==0)return 1;
+		int ans=(len-1)*get_basel();
+		for (int x=a[len-1];x;x/=10)++ans;
+		return ans;
 	}
 	void read(){
 		vector<char> s;char ch;

@@ -77,16 +77,10 @@ void run(){
 		printf("--------i1=%d #samples=%d mean=%.6lf stddev=%.6lf--------\n",i1,i1*T,ave,mu);
 	}
 }
-int len(Int x){
-	static char c[100005];
-	//memset(c,0,sizeof(c));
-	x.to_arr(c);
-	return strlen(c);
-}
 int heuristic_solve(Int x){
 	double r1=1,r3=0.136585,r4=0.078049,r5=0.0243902;
 	p=5; fp=5; q=7; fq=6; r=11; fr=8;
-	int n=ceil(len(x)/(r1*log10(2)+log10(3)+r3*log10(p)+r4*log10(q)+r5*log10(r)));
+	int n=ceil(x.size()/(r1*log10(2)+log10(3)+r3*log10(p)+r4*log10(q)+r5*log10(r)));
 	int n1=ceil(n*r1),n2=n,n3=ceil(n*r3),n4=ceil(n*r4),n5=ceil(n*r5);
 	printf("%d %d %d %d %d\n",n1,n2,n3,n4,n5);
 	return calc(x,n1,n2,n3,n4,n5);
