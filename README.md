@@ -33,6 +33,9 @@ We designed a more efficient algorithm that can compute an upper bound for the i
 
 [upper_bound_3D.cpp](https://github.com/hqztrue/integer_complexity/blob/main/upper_bound/upper_bound_3D.cpp): $O(n^3)$ per sample, using base $2^{n_1}3^{n_2}5^{n_3}$.
 
+[upper_bound_slow_4D.cpp](https://github.com/hqztrue/integer_complexity/blob/main/upper_bound/upper_bound_slow_4D.cpp): using base $2^{n_1}3^{n_2}5^{n_3}7^{n_4}$.
+
+[upper_bound_slow_5D.cpp](https://github.com/hqztrue/integer_complexity/blob/main/upper_bound/upper_bound_slow_5D.cpp): using base $2^{n_1}3^{n_2}5^{n_3}7^{n_4}11^{n_5}$.
 
 # TODO
 1. Use a better factorization library.

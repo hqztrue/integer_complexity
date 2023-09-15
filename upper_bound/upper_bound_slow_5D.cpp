@@ -7,7 +7,7 @@ using namespace std;
 
 typedef unsigned long long ull;
 //const int N=125,N1=35,N2=35,N3=25;
-const int N1=255,N2=215,N3=33,N4=20,N5=7;
+const int N1=255,N2=245,N3=33,N4=20,N5=7;
 int f[N1][N2][N3][N4][N5],n1,n2,n3,n4,n5,p,fp,q,fq,r,fr;  //base=2^n1*3^n2*p^n3*q^n4*r^n5.
 inline void upd(int &x,int y){if (y<x)x=y;}
 Int rand_Int(int n){  //rand Int with n digits
@@ -67,7 +67,7 @@ void run(){
 	q=7; fq=6;
 	r=11; fr=8;
 	//n1=100; n2=100; n3=14; n4=8; n5=2;
-	n1=205; n2=200; n3=28; n4=16; n5=5;
+	n1=210; n2=210; n3=28; n4=16; n5=5;
 	vector<double> a;
 	for (int i1=1;;++i1){
 		int T=1;
@@ -103,7 +103,7 @@ void test_heuristic(){
 }
 int main(){
 	srand(time(0));
-	test_heuristic();
+	//test_heuristic();
 	run();
 	return 0;
 }

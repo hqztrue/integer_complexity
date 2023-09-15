@@ -331,7 +331,7 @@ unsigned add_rand_seed(void *addr) {
 	if (addr) {
 		seed ^= *(unsigned *) addr + (unsigned) (uintptr_t) &errno;
 		seed = power_modulo(seed + 1, seed - 3, -5);
-		assert(0);
+		puts("rand outdated"); assert(0);
 		srand(seed);
 	}
 	return seed;

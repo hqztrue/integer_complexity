@@ -583,17 +583,20 @@ void verify(int T=1e4){  //verify the correctness, by checking f(n) for a few sa
 }
 void factorize_test(u128 N=1e18,int T=1000){  //verify the correctness for different factorization algorithms.
 	int t1=clock();
+	ull s=0;
 	for (int i1=1;i1<=T;++i1){
 		u128 n=rand128()%N+1;
 		//println(n);
 		auto a1=prime_factors128(n);
-		auto a2=prime_factors128_old(n);
+		s+=a1[0].second;
+		/*auto a2=prime_factors128_old(n);
 		if (a1!=a2){
 			prln(a1);
 			prln(a2);
 			exit(0);
-		}
+		}*/
 	}
+	println(s);
 	printf("fac time=%d\n",clock()-t1);
 }
 void test(){
@@ -614,7 +617,7 @@ int main()
 	//u128 N0=pow128(10,23);
 	
 	//verify();
-	//factorize_test(1e18,1e3);
+	//factorize_test(1e30,1e2);
 	//return 0;
 	
 	//init(1e6,1e18);
