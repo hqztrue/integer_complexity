@@ -959,6 +959,7 @@ u64 *factorize(u64 n)
     u64 *ret = (u64 *)calloc(65, sizeof(u64));
     if (ret == NULL)
     {
+		puts("fac err");
         exit(EXIT_FAILURE);
     }
     ret[64] = 0;

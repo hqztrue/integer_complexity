@@ -57,15 +57,17 @@ int complexity_LB_naive(u128 n){  //naive lower bound for f(n).
 }
 unordered_map<u128,int> M_lb;  //record the numbers with low defect.
 int complexity_LB(u128 n){  //better lower bound for f(n). (improvable)
+	//return complexity_LB_naive(n);
 	if (n==1)return 1;
 	int l=upper_bound(g+1,g+g1,n)-g-1;
 	auto it=M_lb.find(n);
 	if (it!=M_lb.end())return l+it->second;
 	return l+2;
 }
-int complexity_UB(uint n){
+int complexity_UB(u128 n){
+	if (n==1)return 1;
 	const double c=4.125;
-	return floor(c*log(n)/log(3));
+	return floor(c*log((double)n)/log(3));
 }
 int _init=[](){ //precomputation
 	for (int i=0;;++i){
@@ -112,6 +114,9 @@ void calc_all(uint n){  //computes f(i) for all i<=n. From Martin N. Fuller.
 			if (a[i]+a[j]<a[ij])a[ij]=a[i]+a[j];
 	}
 }
+u128 max_sub(u128 n,ushort f){
+	return g[f-complexity_LB_naive(n)];
+}
 void calc_all_subtraction(uint n1){  //computes f'(i) for all i<=n. From Janis Iraids.
 	uint g32[inf+1];
 	for (uchar i=0;i<=inf;++i)g32[i]=calc_g(i);
@@ -139,9 +144,9 @@ void calc_all_subtraction(uint n1){  //computes f'(i) for all i<=n. From Janis I
 				if (a[i+j]+a[j]<a[i])a[i]=a[i+j]+a[j],d=max_sub(i,a[i]),flag=1;
 		}
 	}
-	ll s=0;
+	/*ll s=0;
 	for (int i=1;i<=n1;++i)s+=a[i];
-	printf("s=%I64d\n",s);
+	printf("s=%I64d\n",s);*/
 }
 void calc_all_print(uint n){  //computes f(i) for all i<=n, and track the formulas.
 	a=(uchar*)malloc(n+1); a[0]=0; a[1]=1; s[1]="1";
@@ -247,7 +252,10 @@ vector<T> get_factors(T x){  //get all factors of x.
 void clear_hash(){  //clear the hash tables to save memory.
 	H.clear(); H1.clear(); P.clear(); P1.clear(); M_primes.clear();
 }
-ushort dfs(ull x,ushort t){  //similar to dfs128, decides whether f(x)<=t, for x with 62 bits. If true, return the optimal f(x).
+ushort dfs128(u128 x,ushort t);
+//similar to dfs128, decides whether f(x)<=t, for x with 62 bits.
+//If true, return the optimal f(x). Otherwise return an upper bound on f(x).
+ushort dfs(ull x,ushort t){
 	if (x<=n0)return a[x];
 	auto it=H.find(x);
 	if (it!=H.end()&&it->second.first>=t)return it->second.second;
@@ -273,7 +281,6 @@ ushort dfs(ull x,ushort t){  //similar to dfs128, decides whether f(x)<=t, for x
 		if (g>1&&g<=x/g){
 			ushort lb1=complexity_LB(g),lb2=complexity_LB(x/g);
 			if (lb1+lb2>t)continue;
-			//ushort v1=dfs(g,t-lb2);
 			ushort v1=inf1;
 			for (int i=lb1;i<=t-lb2&&i<v1;++i){
 				v1=min(v1,dfs(g,i));
@@ -282,10 +289,18 @@ ushort dfs(ull x,ushort t){  //similar to dfs128, decides whether f(x)<=t, for x
 			ushort v2=dfs(x/g,t-v1);
 			ans=min(ans,ushort(v1+v2));
 		}
+	/*//subtraction
+	u128 d=max_sub(x,t);
+	for (int i=1;i<=d;++i){
+		ushort lb=complexity_LB(x+i);
+		if (a[i]+lb<=t)ans=min(ans,ushort(dfs128(x+i,t-a[i])+a[i]));
+	}*/
 	H[x]=make_pair(t,ans);
 	return ans;
 }
-ushort dfs128(u128 x,ushort t){  //decides whether f(x)<=t, for x with 128 bits. If true, return the optimal f(x).
+//decides whether f(x)<=t, for x with 128 bits.
+//If true, return the optimal f(x). Otherwise return an upper bound on f(x).
+ushort dfs128(u128 x,ushort t){
 	if (x<=n0)return a[x];
 	if (x<U)return dfs(x,t);
 	auto it=H1.find(x);
@@ -318,6 +333,12 @@ ushort dfs128(u128 x,ushort t){  //decides whether f(x)<=t, for x with 128 bits.
 			ushort v2=dfs128(x/g,t-v1);
 			ans=min(ans,ushort(v1+v2));
 		}
+	/*//subtraction
+	u128 d=max_sub(x,t);
+	for (int i=1;i<=d;++i){
+		ushort lb=complexity_LB(x+i);
+		if (a[i]+lb<=t)ans=min(ans,ushort(dfs128(x+i,t-a[i])+a[i]));
+	}*/
 	H1[x]=make_pair(t,ans);
 	return ans;
 }
@@ -404,7 +425,10 @@ void print_expr(u128 x,ushort t=0){  //t: f(x). d: dfs depth.
 void init(uint _n0=1e9,u128 _N0=1e23,bool print=0){
 	int t1=clock();
 	n0=_n0; N0=_N0;
-	if (!print)calc_all(n0);
+	if (!print){
+		//calc_all_subtraction(n0);
+		calc_all(n0);
+	}
 	else calc_all_print(n0);
 	printf("init time=%d\n",clock()-t1);
 }
@@ -610,13 +634,11 @@ double run_sample(int num_samples=1e4,bool debug=1){  //computes the average int
 	return ave;
 }
 void verify(int T=1e4){  //verify the correctness, by checking f(n) for a few samples.
-	init(1e8,1e23);
-	u128 U=1e8; n0=1e4;
+	u128 U=1e8; init(U,1e23); n0=1e4;
 	int t1=clock();
 	for (int i=1;i<=T;++i){
 		u128 n=rand128()%(U-1)+2;
 		assert(calc_single(n)==a[n]);
-		//assert(dfs128(n,a[n])==a[n]);
 	}
 	printf("verify time=%d\n",clock()-t1);
 }
@@ -655,9 +677,9 @@ int main()
 	//srand(1);
 	//u128 N0=pow128(10,23);
 	
-	//calc_all_subtraction(1e7);
 	//verify();
 	//factorize_test(1e30,1e2);
+	//calc_all_subtraction(1e7);
 	//return 0;
 	
 	//init(1e6,1e18);
