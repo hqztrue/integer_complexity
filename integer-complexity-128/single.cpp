@@ -19,6 +19,8 @@ using namespace std;
 #include "allocator.h"
 #include "c_rho-128-bits.h"
 
+//f(n): integer complexity of n.
+//f'(n): integer complexity of n, where subtractions are allowed.
 const uchar inf=127;
 const ushort inf1=10000;
 const ull U=1ull<<62;
@@ -61,6 +63,10 @@ int complexity_LB(u128 n){  //better lower bound for f(n). (improvable)
 	if (it!=M_lb.end())return l+it->second;
 	return l+2;
 }
+int complexity_UB(uint n){
+	const double c=4.125;
+	return floor(c*log(n)/log(3));
+}
 int _init=[](){ //precomputation
 	for (int i=0;;++i){
 		g[i]=calc_g(i);
@@ -90,7 +96,8 @@ int _init=[](){ //precomputation
 		}
 	return 0;
 }();
-void calc_all(uint n){  //computes f(i) for all i<=n.
+
+void calc_all(uint n){  //computes f(i) for all i<=n. From Martin N. Fuller.
 	a=(uchar*)malloc(n+1); a[0]=0; a[1]=1;
 	for (uint i=2;i<=n;++i)a[i]=inf;
 	uint g32[inf+1];
@@ -104,6 +111,37 @@ void calc_all(uint n){  //computes f(i) for all i<=n.
 		for (uint j=2,ij=i*2;j<=i&&ij<=n;++j,ij+=i)
 			if (a[i]+a[j]<a[ij])a[ij]=a[i]+a[j];
 	}
+}
+void calc_all_subtraction(uint n1){  //computes f'(i) for all i<=n. From Janis Iraids.
+	uint g32[inf+1];
+	for (uchar i=0;i<=inf;++i)g32[i]=calc_g(i);
+	auto max_sub=[&](uint n,uchar f){
+		return g32[f-complexity_LB_naive(n)];
+	};
+	uint n=n1+max_sub(n1,complexity_UB(n1));
+	a=(uchar*)malloc(n+1); a[0]=0; a[1]=1;
+	for (uint i=2;i<=n;++i)a[i]=inf;
+	bool flag=1;
+	while (flag){
+		flag=0;
+		for (uint i=2;i<=n;++i){
+			if (a[i-1]+1<a[i])a[i]=a[i-1]+1,flag=1;
+			uchar t=a[i-1],k=1;
+			while (k<t/2&&g32[k+1]+g32[t-k-1]>=i)++k;
+			for (uint j=6;j<=g32[k];++j)
+				if (a[j]+a[i-j]<a[i])a[i]=a[j]+a[i-j],flag=1;
+			for (uint j=2,ij=i*2;j<=i&&ij<=n;++j,ij+=i)
+				if (a[i]+a[j]<a[ij])a[ij]=a[i]+a[j],flag=1;
+		}
+		for (uint i=n1;i;--i){
+			uint d=max_sub(i,a[i]);
+			for (uint j=1;j<=d;++j)
+				if (a[i+j]+a[j]<a[i])a[i]=a[i+j]+a[j],d=max_sub(i,a[i]),flag=1;
+		}
+	}
+	ll s=0;
+	for (int i=1;i<=n1;++i)s+=a[i];
+	printf("s=%I64d\n",s);
 }
 void calc_all_print(uint n){  //computes f(i) for all i<=n, and track the formulas.
 	a=(uchar*)malloc(n+1); a[0]=0; a[1]=1; s[1]="1";
@@ -120,6 +158,7 @@ void calc_all_print(uint n){  //computes f(i) for all i<=n, and track the formul
 			if (a[i]+a[j]<a[ij])a[ij]=a[i]+a[j],s[ij]="("+s[i]+")*("+s[j]+")";
 	}
 }
+
 template<class T>
 const vector<pair<T,uchar>> prime_factors(T x){  //factorize 64 bits, by (mostly) pollard-rho.
 	vector<pair<T,uchar>> ans;
@@ -616,6 +655,7 @@ int main()
 	//srand(1);
 	//u128 N0=pow128(10,23);
 	
+	//calc_all_subtraction(1e7);
 	//verify();
 	//factorize_test(1e30,1e2);
 	//return 0;

@@ -13,3 +13,5 @@ print('1e24',conf_interval(a,20000,0.02))
 print('1e25',conf_interval(a,2000,0.017))
 print('D(b,r) (2,3)',conf_interval(a,10**5,0.0010)/2)
 print('D(b,r) (2,3,5)',conf_interval(a,10**5,0.0026)/2)
+print('D(b,r) (2,3,5,7,11)',conf_interval(a,10**4,0.006)/2)
+
