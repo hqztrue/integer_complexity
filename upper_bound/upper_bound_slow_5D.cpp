@@ -8,6 +8,7 @@ using namespace std;
 typedef unsigned long long ull;
 //const int N=125,N1=35,N2=35,N3=25;
 const int N1=255,N2=245,N3=33,N4=20,N5=7;
+const int f0[]={0,1,2,3,4,5,5,6,6,6,7,8}; //f(n)
 int f[N1][N2][N3][N4][N5],n1,n2,n3,n4,n5,p,fp,q,fq,r,fr;  //base=2^n1*3^n2*p^n3*q^n4*r^n5.
 inline void upd(int &x,int y){if (y<x)x=y;}
 Int rand_Int(int n){  //rand Int with n digits
@@ -33,9 +34,9 @@ int calc(Int x,int n1,int n2,int n3,int n4,int n5){
 					for (int l1=0;l1<=n5;++l1){
 						upd(f[i+1][j][k][l][l1],f[i][j][k][l][l1]+int(t1.a[0]%2));
 						upd(f[i][j+1][k][l][l1],f[i][j][k][l][l1]+int(t1%3));
-						upd(f[i][j][k+1][l][l1],f[i][j][k][l][l1]+int(t1%p));
-						upd(f[i][j][k][l+1][l1],f[i][j][k][l][l1]+int(t1%q));
-						upd(f[i][j][k][l][l1+1],f[i][j][k][l][l1]+int(t1%r));
+						upd(f[i][j][k+1][l][l1],f[i][j][k][l][l1]+f0[t1%p]);
+						upd(f[i][j][k][l+1][l1],f[i][j][k][l][l1]+f0[t1%q]);
+						upd(f[i][j][k][l][l1+1],f[i][j][k][l][l1]+f0[t1%r]);
 						t1/=r;
 					}
 					t/=q;

@@ -7,6 +7,7 @@ using namespace std;
 
 typedef unsigned long long ull;
 const int N=455,N1=65,N2=35;
+const int f0[]={0,1,2,3,4,5,5,6,6,6,7,8}; //f(n)
 int f[N][N][N1][N2],n1,n2,n3,n4,p,fp,q,fq;  //base=2^n1*3^n2*p^n3*q^n4.
 inline void upd(int &x,int y){if (y<x)x=y;}
 Int rand_Int(int n){  //rand Int with n digits
@@ -29,8 +30,8 @@ int calc(Int x){
 				for (int l=0;l<=n4;++l){
 					upd(f[i+1][j][k][l],f[i][j][k][l]+int(t.a[0]%2));
 					upd(f[i][j+1][k][l],f[i][j][k][l]+int(t%3));
-					upd(f[i][j][k+1][l],f[i][j][k][l]+int(t%p));
-					upd(f[i][j][k][l+1],f[i][j][k][l]+int(t%q));
+					upd(f[i][j][k+1][l],f[i][j][k][l]+f0[t%p]);
+					upd(f[i][j][k][l+1],f[i][j][k][l]+f0[t%q]);
 					t/=q;
 				}
 				z/=p;
