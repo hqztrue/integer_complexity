@@ -440,8 +440,8 @@ void clear(){
 void check1(){  // test the conjecture f(p^i)=i*f(p). (In particular, f(2^i)=2i.)
 	int t1=clock();
 	//vector<int> primes={733,379,739,541};  // conjecture fails
-	//vector<int> primes={577,811,109};
-	//vector<int> primes={433,163,487,2};
+	//vector<int> primes={577,811};  // also fails
+	//vector<int> primes={109,433,163,487,2};
 	//vector<int> primes={2};
 	vector<int> primes={811};
 	for (auto mul:primes){
@@ -492,7 +492,7 @@ void check2(){  // test the conjecture f(2^i3^j5^k)=2i+3j+5k (k<=5).
 				u128 n=x*y*z;
 				if (n>N0)break;
 				if (n==1)continue;
-				if (n<1e35)continue;
+				//if (n<1e35)continue;
 				//if (i<60||i==60&&j<3||i==60&&j==3&&k<5)continue;
 				int v=i*2+j*3+k*5,lb=complexity_LB(n);
 				int ans=v;

@@ -23,6 +23,8 @@ For larger integers within u128, see [single.cpp](https://github.com/hqztrue/int
 
 Run [compile.bat]() to compile.
 
+### Subtractions
+The code also supports computing the integer complexity using the operators $+,-,\times,()$. See [A091333](https://oeis.org/A091333).
 
 # Upper Bound
 We designed a more efficient algorithm that can compute an upper bound for the integer complexity, which holds for a set of numbers with natural density 1. The result is correct with high probability.
