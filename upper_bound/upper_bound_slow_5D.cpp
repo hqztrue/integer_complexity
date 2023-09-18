@@ -6,10 +6,12 @@ using namespace std;
 #include "Int1.h"
 
 typedef unsigned long long ull;
-//const int N=125,N1=35,N2=35,N3=25;
-const int N1=255,N2=245,N3=33,N4=20,N5=7;
+//const int N1=210,N2=210,N3=28,N4=16,N5=5;
+//const int N1=315,N2=315,N3=42,N4=24,N5=7;
+const int N1=425,N2=425,N3=58,N4=34,N5=12;
 const int f0[]={0,1,2,3,4,5,5,6,6,6,7,8}; //f(n)
-int f[N1][N2][N3][N4][N5],n1,n2,n3,n4,n5,p,fp,q,fq,r,fr;  //base=2^n1*3^n2*p^n3*q^n4*r^n5.
+auto f=new int[N1+2][N2+2][N3+2][N4+2][N5+2];
+int n1,n2,n3,n4,n5,p,fp,q,fq,r,fr;  //base=2^n1*3^n2*p^n3*q^n4*r^n5.
 inline void upd(int &x,int y){if (y<x)x=y;}
 Int rand_Int(int n){  //rand Int with n digits
 	Int x=0;
@@ -24,6 +26,7 @@ int calc(Int x,int n1,int n2,int n3,int n4,int n5){
 	f[0][0][0][0][0]=0;
 	//f[i][j][k][l][l1]: already divided by i 2's, j 3's, k p's, l q's, and l1 r's.
 	for (int i=0;i<=n1;++i){
+		printf("i=%d\n",i);
 		Int y=x;
 		for (int j=0;j<=n2;++j){
 			Int z=y;
@@ -64,11 +67,8 @@ double run_sample(int T=100){
 	return s;
 }
 void run(){
-	p=5; fp=5;
-	q=7; fq=6;
-	r=11; fr=8;
-	//n1=100; n2=100; n3=14; n4=8; n5=2;
-	n1=210; n2=210; n3=28; n4=16; n5=5;
+	p=5; fp=5; q=7; fq=6; r=11; fr=8;
+	n1=N1; n2=N2; n3=N3; n4=N4; n5=N5;
 	vector<double> a;
 	for (int i1=1;;++i1){
 		int T=1;
