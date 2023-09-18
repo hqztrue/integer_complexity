@@ -6,23 +6,29 @@ using namespace std;
 #include "Int1.h"
 
 typedef unsigned long long ull;
-//const int N1=210,N2=210,N3=28,N4=16,N5=5;
-const int N1=315,N2=315,N3=42,N4=24,N5=7;
-//const int N1=430,N2=430,N3=58,N4=34,N5=12;
+//const int n1=50,n2=50,n3=14,n4=8,n5=3;
+const int n1=100,n2=100,n3=14,n4=8,n5=3;
+//const int n1=210,n2=210,n3=28,n4=16,n5=5;
+//const int n1=230,n2=230,n3=30,n4=18,n5=7;
+//const int n1=315,n2=315,n3=42,n4=24,n5=7;
+//const int n1=430,n2=430,n3=58,n4=34,n5=12;
 const int f0[]={0,1,2,3,4,5,5,6,6,6,7,8}; //f(n)
-auto f=new int[N1+2][N2+2][N3+2][N4+2][N5+2];
-int n1,n2,n3,n4,n5,p,fp,q,fq,r,fr;  //base=2^n1*3^n2*p^n3*q^n4*r^n5.
+auto f=new int[n1+2][n2+2][n3+2][n4+2][n5+2]();
+auto s=new double[n1+2][n2+2][n3+2][n4+2][n5+2]();
+int p,fp,q,fq,r,fr;  //base<=2^n1*3^n2*p^n3*q^n4*r^n5.
 inline void upd(int &x,int y){if (y<x)x=y;}
+inline void upd(double &x,double y){if (y<x)x=y;}
 Int rand_Int(int n){  //rand Int with n digits
 	Int x=0;
 	for (int i=0;i<n;++i)x=x*10+rand64()%10;
 	return x;
 }
-int calc(Int x,int n1,int n2,int n3,int n4,int n5){
+void calc(Int x){
 	for (int i=0;i<=n1;++i)
 		for (int j=0;j<=n2;++j)
 			for (int k=0;k<=n3;++k)
-				for (int l=0;l<=n4;++l)memset(f[i][j][k][l],0x3f,sizeof(int)*(n5+1));
+				for (int l=0;l<=n4;++l)
+					memset(f[i][j][k][l],0x3f,sizeof(int)*(n5+1));
 	f[0][0][0][0][0]=0;
 	//f[i][j][k][l][l1]: already divided by i 2's, j 3's, k p's, l q's, and l1 r's.
 	for (int i=0;i<=n1;++i){
@@ -35,11 +41,13 @@ int calc(Int x,int n1,int n2,int n3,int n4,int n5){
 				for (int l=0;l<=n4;++l){
 					Int t1=t;
 					for (int l1=0;l1<=n5;++l1){
-						upd(f[i+1][j][k][l][l1],f[i][j][k][l][l1]+int(t1.a[0]%2));
-						upd(f[i][j+1][k][l][l1],f[i][j][k][l][l1]+int(t1%3));
-						upd(f[i][j][k+1][l][l1],f[i][j][k][l][l1]+f0[t1%p]);
-						upd(f[i][j][k][l+1][l1],f[i][j][k][l][l1]+f0[t1%q]);
-						upd(f[i][j][k][l][l1+1],f[i][j][k][l][l1]+f0[t1%r]);
+						auto f1=f[i][j][k][l][l1];
+						s[i][j][k][l][l1]+=f1;
+						upd(f[i+1][j][k][l][l1],f1+int(t1.a[0]%2));
+						upd(f[i][j+1][k][l][l1],f1+int(t1%3));
+						upd(f[i][j][k+1][l][l1],f1+f0[t1%p]);
+						upd(f[i][j][k][l+1][l1],f1+f0[t1%q]);
+						upd(f[i][j][k][l][l1+1],f1+f0[t1%r]);
 						t1/=r;
 					}
 					t/=q;
@@ -50,41 +58,49 @@ int calc(Int x,int n1,int n2,int n3,int n4,int n5){
 		}
 		x/=2;
 	}
-	return f[n1][n2][n3][n4][n5]+2*n1+3*n2+fp*n3+fq*n4+fr*n5;
 }
-double run_sample(int T=100){
+void run_sample(){
 	int t1=clock();
-	double s=0;
-	for (int i1=1;i1<=T;++i1){
+	for (int i1=1;;++i1){
 		// set x to be moderately larger than base, so it will only introduce
 		// small error, even if we don't restrict the rand value in [0,base).
 		Int x=rand_Int(n1*log10(2)+n2*log10(3)+n3*log10(p)+n4*log10(q)+n5*log10(r)+15);
-		s+=calc(x,n1,n2,n3,n4,n5);
-	}
-	s/=T; s/=(n1*log(2)+n2*log(3)+n3*log(p)+n4*log(q)+n5*log(r))/log(3);
-	printf("n1=%d n2=%d n3=%d n4=%d n5=%d p=%d q=%d r=%d T=%d ave=%.6lf\n",n1,n2,n3,n4,n5,p,q,r,T,s);
-	printf("time=%d\n",clock()-t1);
-	return s;
-}
-void run(){
-	p=5; fp=5; q=7; fq=6; r=11; fr=8;
-	n1=N1; n2=N2; n3=N3; n4=N4; n5=N5;
-	vector<double> a;
-	for (int i1=1;;++i1){
-		int T=1;
-		double ans=run_sample(T);
-		a.push_back(ans);
-		double ave=mean(a),mu=stddev(a);
-		printf("--------i1=%d #samples=%d mean=%.6lf stddev=%.6lf--------\n",i1,i1*T,ave,mu);
+		calc(x);
+		if (i1%10==0){
+			double ans=1e30;
+			int id1,id2,id3,id4,id5;
+			for (int i=0;i<=n1;++i)
+				for (int j=0;j<=n2;++j)
+					for (int k=0;k<=n3;++k)
+						for (int l=0;l<=n4;++l)
+							for (int l1=0;l1<=n5;++l1)
+								if (i+j+k+l+l1>=(n1+n2+n3+n4+n5)*0.3){
+									double v=(s[i][j][k][l][l1]/i1+2*i+3*j+fp*k+fq*l+fr*l1)/(i*log(2)+j*log(3)+k*log(p)+l*log(q)+l1*log(r));
+									if (v<ans)ans=v,id1=i,id2=j,id3=k,id4=l,id5=l1;
+								}
+			ans*=log(3);
+			//printf("n1=%d n2=%d n3=%d n4=%d n5=%d p=%d q=%d r=%d\n",n1,n2,n3,n4,n5,p,q,r);
+			printf("id=%d %d %d %d %d\n",id1,id2,id3,id4,id5);
+			printf("--------#samples=%d best mean=%.6lf--------\n",i1,ans);
+			printf("time=%d\n",clock()-t1); t1=clock();
+		}
 	}
 }
 int heuristic_solve(Int x){
-	double r1=1,r3=0.136585,r4=0.078049,r5=0.0243902;
-	p=5; fp=5; q=7; fq=6; r=11; fr=8;
-	int n=ceil(x.size()/(r1*log10(2)+log10(3)+r3*log10(p)+r4*log10(q)+r5*log10(r)));
-	int n1=ceil(n*r1),n2=n,n3=ceil(n*r3),n4=ceil(n*r4),n5=ceil(n*r5);
-	printf("%d %d %d %d %d\n",n1,n2,n3,n4,n5);
-	return calc(x,n1,n2,n3,n4,n5);
+	calc(x);
+	int ans=1<<30;
+	int id1,id2,id3,id4,id5,len=x.size();
+	for (int i=0;i<=n1;++i)
+		for (int j=0;j<=n2;++j)
+			for (int k=0;k<=n3;++k)
+				for (int l=0;l<=n4;++l)
+					for (int l1=0;l1<=n5;++l1)
+						if (i*log10(2)+j*log10(3)+k*log10(p)+l*log10(q)+l1*log10(r)>=len){
+							int v=int(s[i][j][k][l][l1])+2*i+3*j+fp*k+fq*l+fr*l1;
+							if (v<ans)ans=v,id1=i,id2=j,id3=k,id4=l,id5=l1;
+						}
+	printf("id=%d %d %d %d %d\n",id1,id2,id3,id4,id5);
+	printf("%d %.5lf\n",ans,ans/(len*log(10)/log(3)));
 }
 void test_heuristic(){
 	//floor(pi*10^100)+10^1000
@@ -105,8 +121,10 @@ void test_heuristic(){
 }
 int main(){
 	srand(time(0));
+	printf("%.5lf GB\n",1.*(n1+2)*(n2+2)*(n3+2)*(n4+2)*(n5+2)*(sizeof(int)+sizeof(double))/pow(2,30));
+	p=5; fp=5; q=7; fq=6; r=11; fr=8;
 	//test_heuristic();
-	run();
+	run_sample();
 	return 0;
 }
 
