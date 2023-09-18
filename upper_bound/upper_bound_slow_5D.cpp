@@ -26,7 +26,7 @@ int calc(Int x,int n1,int n2,int n3,int n4,int n5){
 	f[0][0][0][0][0]=0;
 	//f[i][j][k][l][l1]: already divided by i 2's, j 3's, k p's, l q's, and l1 r's.
 	for (int i=0;i<=n1;++i){
-		printf("i=%d\n",i);
+		//printf("i=%d\n",i);
 		Int y=x;
 		for (int j=0;j<=n2;++j){
 			Int z=y;
