@@ -23,8 +23,9 @@ For larger integers within u128, see [single.cpp](https://github.com/hqztrue/int
 
 Run [compile.bat]() to compile.
 
-### Subtractions
+## Subtractions
 The code also supports computing the integer complexity using the operators $+,-,\times,()$. See [A091333](https://oeis.org/A091333).
+
 
 # Upper Bound
 We designed a more efficient algorithm that can compute an upper bound for the integer complexity, which holds for a set of numbers with natural density 1. The result is correct with high probability.
@@ -37,10 +38,11 @@ We designed a more efficient algorithm that can compute an upper bound for the i
 
 [upper_bound_slow_4D.cpp](https://github.com/hqztrue/integer_complexity/blob/main/upper_bound/upper_bound_slow_4D.cpp): using base $2^{n_1}3^{n_2}5^{n_3}7^{n_4}$.
 
-[upper_bound_slow_5D.cpp](https://github.com/hqztrue/integer_complexity/blob/main/upper_bound/upper_bound_slow_5D.cpp): using base $2^{n_1}3^{n_2}5^{n_3}7^{n_4}11^{n_5}$.
+[upper_bound_slow_5D.cpp](https://github.com/hqztrue/integer_complexity/blob/main/upper_bound/upper_bound_slow_5D.cpp): using base $2^{n_1}3^{n_2}5^{n_3}7^{n_4}11^{n_5}$. Supports finding the optimal $(n_1,n_2,n_3,n_4,n_5)$.
 
 ### Heuristic algorithm
 See [upper_bound_3D.cpp](https://github.com/hqztrue/integer_complexity/blob/main/upper_bound/upper_bound_3D.cpp).
+
 
 # TODO
 1. Use a better factorization library.
