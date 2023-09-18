@@ -5,7 +5,7 @@ using namespace std;
 #include "../integer-complexity-128/statistics.h"
 #include "Int_3D.h"
 
-const int N=10005,N1=3005,p=5,fp=5;
+const int N=10005,N1=5005,p=5,fp=5;
 int _f[2][N1][N];
 int n1,n2,n3;  //base=2^n1*3^n2*p^n3.
 inline void upd(int &x,int y){if (y<x)x=y;}
@@ -90,7 +90,9 @@ void run(){
 	}
 }
 int heuristic_solve(Int x){
-	double r1=0.6,r2=0.35,r3=0.13; int len=x.bit_length();
+	double r1=0.6,r2=0.35,r3=0.13;
+	//double r1=0.8,r2=0.8,r3=0;
+	int len=x.bit_length();
 	int n1=ceil(len*r1),n2=ceil(len*r2),n3=ceil(len*r3);
 	printf("n1=%d n2=%d n3=%d\n",n1,n2,n3);
 	return calc_heuristic(x,n1,n2,n3);
