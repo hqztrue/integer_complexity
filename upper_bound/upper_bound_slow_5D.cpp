@@ -8,7 +8,7 @@ using namespace std;
 typedef unsigned long long ull;
 //const int N1=210,N2=210,N3=28,N4=16,N5=5;
 //const int N1=315,N2=315,N3=42,N4=24,N5=7;
-const int N1=425,N2=425,N3=58,N4=34,N5=12;
+const int N1=420,N2=420,N3=56,N4=32,N5=10;
 const int f0[]={0,1,2,3,4,5,5,6,6,6,7,8}; //f(n)
 auto f=new int[N1+2][N2+2][N3+2][N4+2][N5+2];
 int n1,n2,n3,n4,n5,p,fp,q,fq,r,fr;  //base=2^n1*3^n2*p^n3*q^n4*r^n5.
@@ -26,7 +26,7 @@ int calc(Int x,int n1,int n2,int n3,int n4,int n5){
 	f[0][0][0][0][0]=0;
 	//f[i][j][k][l][l1]: already divided by i 2's, j 3's, k p's, l q's, and l1 r's.
 	for (int i=0;i<=n1;++i){
-		//printf("i=%d\n",i);
+		printf("i=%d\n",i);
 		Int y=x;
 		for (int j=0;j<=n2;++j){
 			Int z=y;
