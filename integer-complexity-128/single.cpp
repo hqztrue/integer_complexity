@@ -23,6 +23,7 @@ using namespace std;
 //f'(n): integer complexity of n, where subtractions are allowed.
 const uchar inf=127;
 const ushort inf1=10000;
+const uint inf32=~0u>>1;
 const ull U=1ull<<62;
 const u128 zero=0,inf128=~zero>>1;
 unordered_map<ull,pair<ushort,ushort>> H;  //memoization for dfs()
@@ -103,7 +104,7 @@ void calc_all(uint n){  //computes f(i) for all i<=n. From Martin N. Fuller.
 	a=(uchar*)malloc(n+1); a[0]=0; a[1]=1;
 	for (uint i=2;i<=n;++i)a[i]=inf;
 	uint g32[inf+1];
-	for (uchar i=0;i<=inf;++i)g32[i]=calc_g(i);
+	for (uchar i=0;i<=inf;++i)g32[i]=min(calc_g(i),inf32);
 	for (uint i=2;i<=n;++i){
 		if (a[i-1]+1<a[i])a[i]=a[i-1]+1;
 		uchar t=a[i-1],k=1;
@@ -119,7 +120,7 @@ u128 max_sub(u128 n,ushort f){
 }
 void calc_all_subtraction(uint n1){  //computes f'(i) for all i<=n. From Janis Iraids.
 	uint g32[inf+1];
-	for (uchar i=0;i<=inf;++i)g32[i]=calc_g(i);
+	for (uchar i=0;i<=inf;++i)g32[i]=min(calc_g(i),(u128)inf32);
 	auto max_sub=[&](uint n,uchar f){
 		return g32[f-complexity_LB_naive(n)];
 	};
@@ -152,7 +153,7 @@ void calc_all_print(uint n){  //computes f(i) for all i<=n, and track the formul
 	a=(uchar*)malloc(n+1); a[0]=0; a[1]=1; s[1]="1";
 	for (uint i=2;i<=n;++i)a[i]=inf;
 	uint g32[inf+1];
-	for (uchar i=0;i<=inf;++i)g32[i]=calc_g(i);
+	for (uchar i=0;i<=inf;++i)g32[i]=min(calc_g(i),(u128)inf32);
 	for (uint i=2;i<=n;++i){
 		if (a[i-1]+1<a[i])a[i]=a[i-1]+1,s[i]=s[i-1]+"+1";
 		uchar t=a[i-1],k=1;
