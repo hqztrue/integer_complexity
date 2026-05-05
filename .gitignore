@@ -4,6 +4,7 @@
 
 *.exe
 *.gch
+*.in
 /results
 /test
 /others
