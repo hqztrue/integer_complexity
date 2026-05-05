@@ -1,10 +1,13 @@
-This project is a C++ implementation of my paper "Improved Algorithms for Integer Complexity"[1] for computing the integer complexity $f(n)$ of a single integer $n$.  
+This project is a C++ implementation of my papers:
+1) "Improved Algorithms for Integer Complexity"[1] for computing the integer complexity $f(n)$ of a single integer $n$;
+2) "Integer Complexity: Algorithms Meet Horner's Rule"[2] for computing the upper bound constant of integer complexity, heuristic algorithms, as well as other results.
 For more context, see [OEIS A005245](https://oeis.org/A005245).
 
 [[1]](https://arxiv.org/pdf/2308.10301.pdf) Qizheng He, Improved Algorithms for Integer Complexity, arXiv:2308.10301 [cs.DS], 2023.
+[[2]](https://arxiv.org/pdf/) Qizheng He, Integer Complexity: Algorithms Meet Horner's Rule, arXiv: [cs.DS], 2026.
 
 
-# Conjectures
+# Open Conjectures
 1. $f(2^i)=2i$?
 2. $f(2^i3^j5^k)=2i+3j+5k$ ($k\leq 5$)?
 3. $f(2^i+1)=2i+1$? (except 3 and 9)
