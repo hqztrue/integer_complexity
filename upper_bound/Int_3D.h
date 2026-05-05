@@ -1,3 +1,5 @@
+#ifndef __INT_3D_H__
+
 #include "../integer-complexity-128/utils.h"
 
 struct Int{
@@ -64,3 +66,4 @@ struct Int{
 const int Int::rem[]={1,2,4,3};
 int Int::N;
 
+#endif

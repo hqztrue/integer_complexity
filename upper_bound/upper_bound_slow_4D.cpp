@@ -4,6 +4,7 @@ using namespace std;
 #include "../integer-complexity-128/utils.h"
 #include "../integer-complexity-128/statistics.h"
 #include "Int1.h"
+#include "consts.h"
 
 typedef unsigned long long ull;
 const int N=455,N1=65,N2=35;

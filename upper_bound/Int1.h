@@ -1,3 +1,5 @@
+#ifndef __INT1_H__
+
 typedef long long ll;
 class Int{
 	#define BASE 1000000000
@@ -281,3 +283,4 @@ class Int{
 	#undef BASE
 };
 
+#endif

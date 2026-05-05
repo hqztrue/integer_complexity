@@ -1,4 +1,7 @@
+#ifndef __INT_H__
+
 #include "../integer-complexity-128/utils.h"
+
 struct Int{
 	const static int N0=300015;
 	const uint mask=0x55555555u;
@@ -51,3 +54,4 @@ struct Int{
 };
 int Int::N;
 
+#endif
