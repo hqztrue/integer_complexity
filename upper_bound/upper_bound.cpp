@@ -6,7 +6,7 @@ using namespace std;
 #include "Int.h"
 #include "consts.h"
 
-const int N=100005;
+const int N=200005;
 int _f[2][N],n1,n2;  //base=2^n1*3^n2.
 inline void upd(int &x,int y){if (y<x)x=y;}
 int calc(Int x,int n1,int n2){
@@ -44,6 +44,7 @@ void run(){
 	//n1=n2=10000;
 	n1=11500; n2=10000;
 	//n1=5600; n2=5000;
+	//n1=115000; n2=100000;
 	Int::N=(n1*log(2)+n2*log(3))/log(2)/32+5;
 	vector<double> a;
 	for (int i1=1;;++i1){
