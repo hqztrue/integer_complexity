@@ -1,9 +1,10 @@
 #ifndef __INT_H__
 
 #include "../integer-complexity-128/utils.h"
+#include<math.h>
 
 struct Int{
-	const static int N0=300015;
+	const static int N0=320105;
 	const uint mask=0x55555555u;
 	static int N;
 	uint a[N0/32+1];
@@ -40,6 +41,14 @@ struct Int{
 		for (int i=N-1;i>=0;--i)
 			if (a[i])return (i+1)*32-__builtin_clz(a[i]);
 		return 1;
+	}
+	double log2(){
+		for (int i=N-1;i>=0;--i)
+			if (a[i]){
+				if (i)return ::log2(a[i]*pow(2.,32)+a[i-1])+(i-1)*32;
+				else return ::log2(a[i])+i*32;
+			}
+		return 0;  //-inf
 	}
 	void clear(){memset(a,0,sizeof(uint)*N);}
 	void read(const char *s){

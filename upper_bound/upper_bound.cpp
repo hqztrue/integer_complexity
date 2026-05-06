@@ -6,7 +6,7 @@ using namespace std;
 #include "Int.h"
 #include "consts.h"
 
-const int N=200005;
+const int N=200005,inf=1e9;
 int _f[2][N],n1,n2;  //base=2^n1*3^n2.
 inline void upd(int &x,int y){if (y<x)x=y;}
 int calc(Int x,int n1,int n2){
@@ -25,6 +25,29 @@ int calc(Int x,int n1,int n2){
 		x/=3; swap(f,f1);
 	}
 	return f1[n1]+2*n1+3*n2;
+}
+int calc_all(Int x){
+	int ans=inf;
+	double logx=x.log2();
+	int n1=(int)ceil(logx),n2=(int)ceil(logx/log2(3));
+	int *f=_f[0],*f1=_f[1]; Int v;
+	memset(f,0x3f,sizeof(int)*(n1+1));
+	f[0]=0;
+	for (int i=0;i<=n2;++i){
+		n1=max((int)ceil(logx-i*log2(3)),0);
+		memset(f1,0x3f,sizeof(int)*(n1+1));
+		v=x; v.init_div2();
+		//f[j]: already divided by i 3's, and j 2's.
+		for (int j=0;j<=n1;++j){
+			upd(f[j+1],f[j]+v.mod2);
+			upd(f1[j],f[j]+v.mod3);
+			v.div2();
+		}
+		//printf("calc %.5lf %d %d %d\n",logx,n1,i,f[n1]+2*n1+3*i);
+		ans=min(ans,f[n1]+2*n1+3*i);
+		x/=3; swap(f,f1);
+	}
+	return ans;
 }
 double run_sample(int T=1){
 	int t1=clock();
@@ -63,14 +86,19 @@ void test_heuristic(){
 	Int n; Int::N=500;
 	for (auto x:{x1_str,x2_str,x3_str}){
 		n.read(x);
-		int ans=heuristic_solve(n);
+		int ans=calc_all(n);
+		//int ans=heuristic_solve(n);
 		printf("%d %.6lf\n",ans,ans/(n.bit_length()/log2(3)));
 	}
 }
+
+#include "upper_bound_test_heuristics.cpp"
+
 int main(){
 	srand(time(0));
-	//test_heuristic();
-	run();
+	test_heuristic();
+	//test_heuristic_conjectures();
+	//run();
 	return 0;
 }
 
