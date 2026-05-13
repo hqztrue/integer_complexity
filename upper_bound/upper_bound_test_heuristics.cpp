@@ -27,7 +27,7 @@ void test_heuristic_conjectures(){
 			int ans=calc_all(n);
 			//printf("len %d %.6lf\n", n.bit_length(), n.log2());
 			printf("%d %.6lf\n",ans,ans/(n.log2()/log2(3)));
-			if (ans<2*len){
+			if (ans<2*len){  //<=2*len
 				printf("counter example: %d\n",len);
 				for (;;);
 			}

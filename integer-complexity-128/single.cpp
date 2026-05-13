@@ -21,6 +21,7 @@ using namespace std;
 
 //f(n): integer complexity of n.
 //f'(n): integer complexity of n, where subtractions are allowed.
+
 const uchar inf=127;
 const ushort inf1=10000;
 const uint inf32=~0u>>1;
@@ -36,26 +37,31 @@ string s[10000005];  //record the formulas for f(n) (n<=n0).
 uint n0;  //threshold for precomputing f(n) (n<=n0).
 u128 N0;  //we only compute f(n) for n<=N0.
 ull CNT; int T0=clock();  //timer for the current progress
+
 uint log3_floor(u128 n){
 	uint ans=0;
 	while (n>=3)n/=3,++ans;
 	return ans;
 }
+
 u128 calc_g(int n){  //computes the maximum integer with complexity n.
 	u128 res=1;
 	while (n>=5||n==3)res*=3,n-=3;
 	return res<<n/2;
 }
+
 int defect_approx(u128 n,int cur){  //approximately computes the defect.
 	const double eps=1e-3;
 	for (int i=1;;++i)
 		if (g[i]*(1+eps)>=n)return max(cur-i,0);
 }
+
 int complexity_LB_naive(u128 n){  //naive lower bound for f(n).
 	//for (int i=1;;++i)
 	//	if (g[i]>=n)return i;
 	return lower_bound(g+1,g+g1,n)-g;
 }
+
 unordered_map<u128,int> M_lb;  //record the numbers with low defect.
 int complexity_LB(u128 n){  //better lower bound for f(n). (improvable)
 	//return complexity_LB_naive(n);
@@ -65,11 +71,13 @@ int complexity_LB(u128 n){  //better lower bound for f(n). (improvable)
 	if (it!=M_lb.end())return l+it->second;
 	return l+2;
 }
+
 int complexity_UB(u128 n){
 	if (n==1)return 1;
 	const double c=4.125;
 	return floor(c*log((double)n)/log(3));
 }
+
 int _init=[](){ //precomputation
 	for (int i=0;;++i){
 		g[i]=calc_g(i);
@@ -97,6 +105,7 @@ int _init=[](){ //precomputation
 			if (j<=inf128/i)M_lb[i*j]=0;
 			if (j>inf128/3)break;
 		}
+	printf("|M_lb|=%zu\n",M_lb.size());
 	return 0;
 }();
 
@@ -104,7 +113,7 @@ void calc_all(uint n){  //computes f(i) for all i<=n. From Martin N. Fuller.
 	a=(uchar*)malloc(n+1); a[0]=0; a[1]=1;
 	for (uint i=2;i<=n;++i)a[i]=inf;
 	uint g32[inf+1];
-	for (uchar i=0;i<=inf;++i)g32[i]=min(calc_g(i),inf32);
+	for (uchar i=0;i<=inf;++i)g32[i]=min(calc_g(i),(u128)inf32);
 	for (uint i=2;i<=n;++i){
 		if (a[i-1]+1<a[i])a[i]=a[i-1]+1;
 		uchar t=a[i-1],k=1;
@@ -115,9 +124,11 @@ void calc_all(uint n){  //computes f(i) for all i<=n. From Martin N. Fuller.
 			if (a[i]+a[j]<a[ij])a[ij]=a[i]+a[j];
 	}
 }
+
 u128 max_sub(u128 n,ushort f){
 	return g[f-complexity_LB_naive(n)];
 }
+
 void calc_all_subtraction(uint n1){  //computes f'(i) for all i<=n. From Janis Iraids.
 	uint g32[inf+1];
 	for (uchar i=0;i<=inf;++i)g32[i]=min(calc_g(i),(u128)inf32);
@@ -128,7 +139,7 @@ void calc_all_subtraction(uint n1){  //computes f'(i) for all i<=n. From Janis I
 	a=(uchar*)malloc(n+1); a[0]=0; a[1]=1;
 	for (uint i=2;i<=n;++i)a[i]=inf;
 	bool flag=1;
-	while (flag){
+	while (flag){  // iterate until converges
 		flag=0;
 		for (uint i=2;i<=n;++i){
 			if (a[i-1]+1<a[i])a[i]=a[i-1]+1,flag=1;
@@ -149,6 +160,7 @@ void calc_all_subtraction(uint n1){  //computes f'(i) for all i<=n. From Janis I
 	for (int i=1;i<=n1;++i)s+=a[i];
 	printf("s=%I64d\n",s);*/
 }
+
 void calc_all_print(uint n){  //computes f(i) for all i<=n, and track the formulas.
 	a=(uchar*)malloc(n+1); a[0]=0; a[1]=1; s[1]="1";
 	for (uint i=2;i<=n;++i)a[i]=inf;
@@ -178,6 +190,7 @@ const vector<pair<T,uchar>> prime_factors(T x){  //factorize 64 bits, by (mostly
 	free(pf);
 	return ans;
 }
+
 /*static inline void fac_display_verbose(fac_cint ** ans) {
 	for(int i = 0; i < 100; ++i)
 		putchar(' ');
@@ -186,6 +199,7 @@ const vector<pair<T,uchar>> prime_factors(T x){  //factorize 64 bits, by (mostly
 	puts(str);
 	free(str);
 }*/
+
 template<class T>
 const vector<pair<T,uchar>> prime_factors128_old(T x){  //factorize 128 bits, by C-Quadratic-Sieve.
 	vector<pair<T,uchar>> a;
@@ -211,6 +225,7 @@ const vector<pair<T,uchar>> prime_factors128_old(T x){  //factorize 128 bits, by
 	//for (auto &t:a)printf("%I64d %d\n",t.first,t.second);
 	return a;
 }
+
 template<class T>
 const vector<pair<T,uchar>> prime_factors128(T x){  //factorize 128 bits, by C-RHO-128.
 	vector<pair<T,uchar>> a;
@@ -231,6 +246,7 @@ const vector<pair<T,uchar>> prime_factors128(T x){  //factorize 128 bits, by C-R
     free(factors);
 	return a;
 }
+
 template<class T>
 vector<T> get_factors_from_primes(const vector<pair<T,uchar>> &p){  //get all factors from prime factorization.
 	vector<T> a; a.push_back(1);
@@ -241,19 +257,24 @@ vector<T> get_factors_from_primes(const vector<pair<T,uchar>> &p){  //get all fa
 	}
 	return a;
 }
+
 bool is_prime_slow(u128 x){
 	auto v=prime_factors128(x);
 	return v.size()==1&&v[0].second==1;
 }
+
 template<class T>
 vector<T> get_factors(T x){  //get all factors of x.
 	if (sizeof(T)==sizeof(ull))return get_factors_from_primes(prime_factors(x));
 	else return get_factors_from_primes(prime_factors128(x));
 }
+
 void clear_hash(){  //clear the hash tables to save memory.
 	H.clear(); H1.clear(); P.clear(); P1.clear(); M_primes.clear();
 }
+
 ushort dfs128(u128 x,ushort t);
+
 //similar to dfs128, decides whether f(x)<=t, for x with 62 bits.
 //If true, return the optimal f(x). Otherwise return an upper bound on f(x).
 ushort dfs(ull x,ushort t){
@@ -299,6 +320,7 @@ ushort dfs(ull x,ushort t){
 	H[x]=make_pair(t,ans);
 	return ans;
 }
+
 //decides whether f(x)<=t, for x with 128 bits.
 //If true, return the optimal f(x). Otherwise return an upper bound on f(x).
 ushort dfs128(u128 x,ushort t){
@@ -343,6 +365,7 @@ ushort dfs128(u128 x,ushort t){
 	H1[x]=make_pair(t,ans);
 	return ans;
 }
+
 ushort dfs128_lazy(u128 x,ushort t){  //without performing new computation, only use the stored hash tables.
 	if (x<=n0)return a[x];
 	if (x<U){
@@ -354,6 +377,7 @@ ushort dfs128_lazy(u128 x,ushort t){  //without performing new computation, only
 		return it!=H1.end()?it->second.second:inf1;
 	}
 }
+
 ushort calc_single(u128 n){  //computes f(n).
 	int lb=complexity_LB(n);
 	int ans=inf1;
@@ -413,6 +437,7 @@ void dfs128_print(u128 x,ushort t){  //print the formula for f(x).
 			}
 		}
 }
+
 void print_expr(u128 x,ushort t=0){  //t: f(x). d: dfs depth.
 	if (!t)t=calc_single(x);
 	ushort d=complexity_LB(x);
@@ -433,11 +458,13 @@ void init(uint _n0=1e9,u128 _N0=1e23,bool print=0){
 	else calc_all_print(n0);
 	printf("init time=%d\n",clock()-t1);
 }
+
 void clear(){
 	H.clear(); H1.clear();
 	//unordered_map<ull,pair<ushort,ushort>>().swap(H);
 	//unordered_map<u128,pair<ushort,ushort>>().swap(H1);
 }
+
 void check1(){  // test the conjecture f(p^i)=i*f(p). (In particular, f(2^i)=2i.)
 	int t1=clock();
 	//vector<int> primes={733,379,739,541};  // conjecture fails
@@ -479,6 +506,7 @@ void check1(){  // test the conjecture f(p^i)=i*f(p). (In particular, f(2^i)=2i.
 	}
 	printf("time=%d\n",clock()-t1);
 }
+
 void check2(){  // test the conjecture f(2^i3^j5^k)=2i+3j+5k (k<=5).
 	int t1=clock();
 	u128 x=2;
@@ -514,6 +542,7 @@ void check2(){  // test the conjecture f(2^i3^j5^k)=2i+3j+5k (k<=5).
 	}
 	printf("time=%d\n",clock()-t1);
 }
+
 void check3(){  // test the conjecture f(2^i+1)=2i+1.
 	int t1=clock();
 	vector<int> primes={2};
@@ -550,6 +579,7 @@ void check3(){  // test the conjecture f(2^i+1)=2i+1.
 	}
 	printf("time=%d\n",clock()-t1);
 }
+
 void check4(){  // test the conjecture f(3p)=min{f(3p-1)+1,f(p)+3} for prime p, by sampling a few integers.
 	int t1=clock();
 	u128 U=1e22;
@@ -569,6 +599,7 @@ void check4(){  // test the conjecture f(3p)=min{f(3p-1)+1,f(p)+3} for prime p, 
 	}
 	printf("time=%d\n",clock()-t1);
 }
+
 void check5(){  // test the conjecture f(3^k*n)=f(n)+3k for n=73(3^21+1)+6=763605783898.
 	int t1=clock(),t0=t1;
 	u128 x=763605783898ull;
@@ -600,6 +631,7 @@ void check5(){  // test the conjecture f(3^k*n)=f(n)+3k for n=73(3^21+1)+6=76360
 	}
 	printf("total time=%d\n",clock()-t0);
 }
+
 double run_sample(int num_samples=1e4,bool debug=1){  //computes the average integer complexity, by sampling.
 	//freopen("data.txt","w",stdout);
 	int t1=clock(),t2=t1;
@@ -634,6 +666,7 @@ double run_sample(int num_samples=1e4,bool debug=1){  //computes the average int
 	//fclose(stdout);
 	return ave;
 }
+
 void verify(int T=1e4){  //verify the correctness, by checking f(n) for a few samples.
 	u128 U=1e8; init(U,1e23); n0=1e4;
 	int t1=clock();
@@ -643,6 +676,7 @@ void verify(int T=1e4){  //verify the correctness, by checking f(n) for a few sa
 	}
 	printf("verify time=%d\n",clock()-t1);
 }
+
 void factorize_test(u128 N=1e18,int T=1000){  //verify the correctness for different factorization algorithms.
 	int t1=clock();
 	ull s=0;
@@ -661,6 +695,7 @@ void factorize_test(u128 N=1e18,int T=1000){  //verify the correctness for diffe
 	println(s);
 	printf("fac time=%d\n",clock()-t1);
 }
+
 void test(){
 	//prime_factors(123456789012345678);
 	
@@ -672,6 +707,7 @@ void test(){
 	printf("time=%d\n",clock()-t1);
 	exit(0);*/
 }
+
 int main()
 {
 	srand(time(0));

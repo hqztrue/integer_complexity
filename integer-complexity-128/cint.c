@@ -41,7 +41,7 @@ static cint_sheet * cint_new_sheet(const size_t bits) {
 	const size_t num_size = 2 + bits / cint_exponent;
 	if (sheet) for (size_t i = 0; i < 10; ++i) {
 		sheet->temp[i].nat = 1 ;
-		sheet->temp[i].mem = sheet->temp[i].end = calloc(num_size, sizeof(h_cint_t));
+		sheet->temp[i].mem = sheet->temp[i].end = (h_cint_t*)calloc(num_size, sizeof(h_cint_t));
 		assert(sheet->temp[i].mem);
 		sheet->temp[i].size = num_size;
 	}
@@ -97,8 +97,8 @@ static inline int cint_compare(const cint * lhs, const cint * rhs) {
 
 static void cint_init(cint * num, size_t bits, long long int value) {
 	num->size = bits / cint_exponent;
-	num->size += 8 - num->size % 4 ;
-	num->end = num->mem = calloc(num->size, sizeof(*num->mem));
+	num->size += 8 - num->size % 4;
+	num->end = num->mem = (h_cint_t*)calloc(num->size, sizeof(*num->mem));
 	assert(num->mem);
 	if((num->nat = 1 - ((value < 0) << 1)) < 0) value = -value;
 	for (; value; *num->end = (h_cint_t)(value % cint_base), value /= cint_base, ++num->end);
@@ -276,7 +276,7 @@ static void cint_left_shifti(cint *num, const size_t bits) {
 
 static void cint_right_shifti(cint *num, const size_t bits) {
 	size_t a = bits / cint_exponent, b = bits % cint_exponent, c = cint_exponent - b;
-	if (num->end - a > num->mem) {
+	if (num->end - num->mem > a) {
 		if (a) {
 			if(num->mem + a > num->end) a = num->end - num->mem;
 			memmove(num->mem, num->mem + a, (num->end - num->mem) * sizeof(h_cint_t));

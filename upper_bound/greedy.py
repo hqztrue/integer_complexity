@@ -1,12 +1,37 @@
-def greedy(x): #Steinerberger
-	ans=0
-	while x>5:
-		m=x%6
-		if m==0 or m==3: x//=3; ans+=3
-		elif m==1: x//=3; ans+=3+1
-		elif m==2 or m==4: x//=2; ans+=2
-		elif m==5: x//=2; ans+=2+1
-	return ans+x
+import sys,os,math
+
+def compute_integer_complexities(limit):
+    """
+    Returns a list `c` where c[n] is the integer complexity of n (n >= 1).
+    The list is 0-indexed, with c[0] unused.
+    """
+    c = [0] * (limit + 1)
+    c[1] = 1  # base case: "1" uses one '1'
+
+    for n in range(2, limit + 1):
+        best = n  # worst case: n times "1+1+...+1"
+
+        # Try all splits n = a + b
+        for a in range(1, n):
+            b = n - a
+            best = min(best, c[a] + c[b])
+
+        # Try all factorizations n = a * b (a <= b)
+        a = 2
+        while a * a <= n:
+            if n % a == 0:
+                b = n // a
+                best = min(best, c[a] + c[b])
+            a += 1
+
+        c[n] = best
+
+    return c
+
+#n=1000
+#f = compute_integer_complexities(n)
+#for i in range(0, n+1):
+#    print(f[i],end=", ")
 
 a=(3, 3, 2, 3, 2, 5, 3, 7, 2, 3, 2, 11, 2, 6, 2, 3, 2, 2, 3, 3, 2, 3, 2, 2, 2, 2, 2, 3, 2, 2,
 3, 3, 2, 3, 2, 7, 6, 6, 2, 3, 2, 2, 3, 3, 2, 3, 2, 2, 3, 7, 2, 3, 2, 2, 3, 55, 2, 3, 2, 2,
@@ -87,8 +112,30 @@ a=(3, 3, 2, 3, 2, 5, 3, 7, 2, 3, 2, 11, 2, 6, 2, 3, 2, 2, 3, 3, 2, 3, 2, 2, 2, 2
 3, 3, 2, 3, 2, 5, 3, 3, 2, 3, 2, 2, 3, 3, 2, 3, 2, 2, 2, 2, 2, 3, 2, 7, 3, 3, 2, 3, 2, 2)
 B=2310
 
-f=[10**10 for i in range(100)]
-f[2]=2; f[3]=3; f[5]=5; f[6]=5; f[7]=6; f[11]=8; f[14]=8; f[55]=12
+#f=[10**10 for i in range(100)]
+#f[2]=2; f[3]=3; f[5]=5; f[6]=5; f[7]=6; f[11]=8; f[14]=8; f[55]=12
+f = [0, 1, 2, 3, 4, 5, 5, 6, 6, 6, 7, 8, 7, 8, 8, 8, 8, 9, 8, 9, 9, 9, 10, 11, 9, 10, 10, 9, 10, 11, 10, 11, 10, 11, 11, 11, 10, 11, 11, 11, 11, 12, 11, 12, 12, 11, 12, 13, 11, 12, 12, 12, 12, 13, 11, 12, 12, 12, 13, 14, 12, 13, 13, 12, 12, 13, 13, 14, 13, 14, 13, 14, 12, 13, 13, 13, 13, 14, 13, 14]
+
+def greedy(x): #Steinerberger
+	ans=0
+	while x>5:
+		m=x%6
+		if m==0 or m==3: x//=3; ans+=3
+		elif m==1: x//=3; ans+=3+1
+		elif m==2 or m==4: x//=2; ans+=2
+		elif m==5: x//=2; ans+=2+1
+	return ans+x
+
+def greedy_match(x):
+    ans=0
+    c=[(3,0),(2,0),(3,1),(2,1),(3,2)]
+    while x>1:
+        for a,b in c:
+            if x%a==b:
+                ans+=f[a]+f[b]
+                x//=a
+                break
+    return ans
 
 def greedy_new(x): #Shriver
 	ans=0
@@ -107,10 +154,10 @@ x3=10**3000+27182818284590452353602874713526624977572470936999595749669676277240
 x2=10**2000+141421356237309504880168872420969807856967187537694
 x3=10**3000+271828182845904523536028747135266249775724709369995'''
 
-_x1=31415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679
+#_x1=31415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679
 #print(bin(_x1)[2:])
 
 for x in [x1,x2,x3]:
 	#print(bin(x)[2:])
-	print('old: ',greedy(x),'new: ',greedy_new(x))
+	print('old: ',greedy(x),'match: ',greedy_match(x),'new: ',greedy_new(x))
 
