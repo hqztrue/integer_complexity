@@ -9,7 +9,7 @@ fac_cint **c_factor(const cint *N, fac_params *config) {
 	assert(mem);
 	add_rand_seed(&mem);
 	if (config) m.params = config;
-	else m.params = mem, mem = m.params + 1;
+	else m.params = (fac_params*)mem, mem = m.params + 1;
 	m.calc = cint_new_sheet((1 + (input_bits >> 10)) << 10);
 	assert(m.calc);
 
@@ -22,15 +22,15 @@ fac_cint **c_factor(const cint *N, fac_params *config) {
 
 	// prepare a working array.
 	const int max_factors = input_bits / 10 + 32;
-	m.questions.data = mem, mem = m.questions.data + max_factors ;
-	m.answers.data = mem, mem = m.answers.data + max_factors ;
+	m.questions.data = (fac_cint*)mem, mem = m.questions.data + max_factors;
+	m.answers.data = (fac_cint*)mem, mem = m.answers.data + max_factors;
 
-	m.number = &m.questions.data[m.questions.index++] ;
+	m.number = &m.questions.data[m.questions.index++];
 	simple_dup_cint(&m.number->cint, N, &mem);
-	m.number->bits = input_bits ;
-	m.number->power = 1, m.number->prime = -1 ;
+	m.number->bits = input_bits;
+	m.number->power = 1, m.number->prime = -1;
 
-	m.mem.now = mem ;
+	m.mem.now = mem;
 	// iterates the array until it's empty, begin with the input N.
 	// functions must not push their input to the stack, they return 0 instead.
 	do {
@@ -49,23 +49,24 @@ fac_cint **c_factor(const cint *N, fac_params *config) {
 	} while (m.questions.index);
 
 	// answer goes into an appropriately sized memory allocation.
-	size_t bytes = 0 ;
+	size_t bytes = 0;
 	for(unsigned i = 0; i < m.answers.index; ++i)
-		bytes += m.answers.data[i].cint.end - m.answers.data[i].cint.mem + 1 ;
+		bytes += m.answers.data[i].cint.end - m.answers.data[i].cint.mem + 1;
 	bytes *= sizeof(h_cint_t);
-	bytes += (sizeof(fac_cint) + sizeof(fac_cint*)) * (m.answers.index + 1) ;
-	fac_cint  ** res = mem = calloc(1, bytes);
+	bytes += (sizeof(fac_cint) + sizeof(fac_cint*)) * (m.answers.index + 1);
+	mem = calloc(1, bytes);
+	fac_cint  ** res = (fac_cint**)mem;
 	assert(mem);
 
 	qsort(m.answers.data, m.answers.index, sizeof(fac_cint), &fac_sort_result);
 
-	mem = res + m.answers.index + 1 ;
+	mem = res + m.answers.index + 1;
 	for(unsigned i = 0; i < m.answers.index; ++i) {
-		fac_cint * factor = &m.answers.data[i] ;
-		res[i] = mem, mem = res[i] + 1 ;
-		res[i]->power = factor->power ;
-		res[i]->prime = factor->prime ;
-		res[i]->bits = (int) cint_count_bits(&factor->cint) ;
+		fac_cint * factor = &m.answers.data[i];
+		res[i] = (fac_cint*)mem, mem = res[i] + 1;
+		res[i]->power = factor->power;
+		res[i]->prime = factor->prime;
+		res[i]->bits = (int) cint_count_bits(&factor->cint);
 		simple_inline_cint(&res[i]->cint, factor->cint.size, &mem);
 		cint_dup(&res[i]->cint, &factor->cint);
 	}
@@ -75,17 +76,17 @@ fac_cint **c_factor(const cint *N, fac_params *config) {
 }
 
 int fac_special_cases(fac_caller *m) {
-	int res = m->number->bits < 3 ;
+	int res = m->number->bits < 3;
 	if (res && m->answers.index == 0) {
 		const int prime = m->number->bits > 1;
 		fac_push(m, &m->number->cint, prime, 1, 0);
 	}
-	return res ;
+	return res;
 }
 
 int fac_trial_division(fac_caller *m, const int level) {
-	cint * F = m->vars ;
-	int res = (*m->number->cint.mem & 1) == 0 ; // remove power of 2.
+	cint * F = m->vars;
+	int res = (*m->number->cint.mem & 1) == 0; // remove power of 2.
 	if (m->trial.done_up_to == 0){
 		if (res) {
 			simple_int_to_cint(F, 2);
@@ -93,7 +94,7 @@ int fac_trial_division(fac_caller *m, const int level) {
 			fac_push(m, F, 1, power, 0);
 			cint_right_shifti(&m->number->cint, power);
 		}
-		m->trial.done_up_to = 1 ;
+		m->trial.done_up_to = 1;
 	}
 
 	qs_sm bound;
@@ -113,25 +114,25 @@ int fac_trial_division(fac_caller *m, const int level) {
 	}
 	simple_int_to_cint(&m->trial.cint, m->trial.done_up_to);
 	if (res) fac_push(m, &m->number->cint, -1, 1, 1);
-	return res ;
+	return res;
 }
 
 int fac_any_root_check(fac_caller * m, const cint *N, cint *ROOT, cint *REM){
 	// Can normally say if a number is a perfect power, it takes in account the trial divisions initially done.
 	// Indicates the lowest root found, not the highest, functions can call recursively if they are not "satisfied".
-	int res = 0 ;
-	const int max_root = 30 ;
-	for(int nth = 2; nth < max_root ; ++nth)
+	int res = 0;
+	const int max_root = 30;
+	for(int nth = 2; nth < max_root; ++nth)
 		if (is_prime_4669921(nth)) {
 			cint_nth_root_remainder(m->calc, N, nth, ROOT, REM);
 			if (REM->mem == REM->end){
-				res = nth ;
+				res = nth;
 				break;
 			}
 			if (h_cint_compare(ROOT, &m->trial.cint) <= 0)
 				break;
 		}
-	return res ;
+	return res;
 }
 
 int fac_perfect_checker(fac_caller *m) {
@@ -169,7 +170,7 @@ int fac_pollard_rho_63_bits(fac_caller *m) {
 			}
 		}
 		n[0] /= n[1];
-		cint * F = m->vars ;
+		cint * F = m->vars;
 		for (int i = 0; i < 2; ++i) {
 			simple_int_to_cint(F, n[i]);
 			fac_push(m, F, -1, 1, 1);
@@ -181,7 +182,7 @@ int fac_pollard_rho_63_bits(fac_caller *m) {
 // functions submit factors of N, they don't push N itself with "forward" (otherwise there is an infinite loop).
 void fac_push(fac_caller *m, const cint * num, const int prime, const int power, const int forward) {
 	// the product of "stack last" and "stack next" must remain N.
-	fac_cint * row ;
+	fac_cint * row;
 	if (forward){
 		row = &m->questions.data[m->questions.index++];
 		const size_t needed_size = num->end - num->mem + 1;
@@ -189,7 +190,7 @@ void fac_push(fac_caller *m, const cint * num, const int prime, const int power,
 			simple_inline_cint(&row->cint, needed_size, &m->mem.now);
 		row->bits = (int) cint_count_bits(num);
 	} else {
-		row = &m->answers.data[m->answers.index++] ;
+		row = &m->answers.data[m->answers.index++];
 		simple_inline_cint(&row->cint, num->end - num->mem + 1, &m->mem.now);
 	}
 	cint_dup(&row->cint, num);
@@ -222,7 +223,7 @@ double log_computation(const double n) {
 qs_sm multiplication_modulo(qs_md a, qs_md b, const qs_sm mod) {
 // the implementation is designed for beginners, so there aren't many preprocessing "tricks".
 #ifdef __SIZEOF_INT128__
-	return (qs_sm)((__int128_t) a * (__int128_t) b % (__int128_t) mod) ;
+	return (qs_sm)((__int128_t) a * (__int128_t) b % (__int128_t) mod);
 #else
 	// Return (a * b) % mod, avoiding overflow errors while doing modular multiplication.
 	qs_md res = 0, tmp;
@@ -368,13 +369,13 @@ qs_md simple_cint_to_int(const cint *num) {
 // Avl
 struct avl_node *avl_cint_inserter(void *args, const void *key_to_save) {
 	// it expects as result a new node containing the given constant key.
-	void * mem = *(void**) args ;
-	struct avl_node *res = mem;
+	void * mem = *(void**) args;
+	struct avl_node *res = (avl_node*)mem;
 	res->key = (cint *) (res + 1);
 	mem = (cint *) res->key + 1;
-	simple_dup_cint(res->key, key_to_save, &mem);
+	simple_dup_cint((cint*)res->key, (const cint*)key_to_save, &mem);
 	assert(res->value == 0);
-	*(void**)args = mem ;
+	*(void**)args = mem;
 	return res;
 }
 
@@ -393,7 +394,7 @@ int fac_apply_custom_param(const char *a, const char *b, int length, unsigned *v
 		for (; *b && !(*b >= '1' && *b <= '9'); ++b);
 		for (*val = 0; *b && !(*val >> 26); ++b)
 			*val = *val * 10 + *b - '0';
-		if (*val == 0) *val = 1 ;
+		if (*val == 0) *val = 1;
 	}
 	return res;
 }
@@ -422,24 +423,24 @@ char *fac_fill_params(fac_params *params, int argc, char **args) {
 
 char *fac_answer_to_string(fac_cint **ans) {
 	// Basic function that should return a string to represent the given answer.
-	if (ans == 0 || ans[0] == 0) return strdup("factorizer has no answer to format.") ;
-	int bytes  = 0, i, j ;
+	if (ans == 0 || ans[0] == 0) return strdup("factorizer has no answer to format.");
+	int bytes  = 0, i, j;
 	for(i = 0; ans[i]; ++i){
-		bytes += (int)(1. + 0.30102999566 * ans[i]->bits) ;
+		bytes += (int)(1. + 0.30102999566 * ans[i]->bits);
 		if (ans[i]->power > 1){
 			for(j = 2; ans[i]->power >> j; ++j);
 			bytes += (int) (6. + 0.30102999566 * j);
 		}
-		bytes += (ans[i]->prime < 1) << 2 ;
+		bytes += (ans[i]->prime < 1) << 2;
 	}
-	bytes += 3 * i - 2 ;
-	char * str, *res = str = malloc(bytes);
+	bytes += 3 * i - 2;
+	char * str, *res = str = (char*)malloc(bytes);
 	assert(res);
 	for(*str = 0, i = 0; ans[i]; ++i){
 		char * s = cint_to_string(&ans[i]->cint, 10);
 		if (ans[i]->power > 1) strcat(str++, "(");
 		if (ans[i]->prime < 1) strcat(str, " \""), str += 2;
-		str += sprintf(str, "%s", s) ;
+		str += sprintf(str, "%s", s);
 		if (ans[i]->prime < 1) strcat(str, "\" "), str += 2;
 		if (ans[i]->power > 1)
 			str += sprintf(str, " ^ %d", ans[i]->power);
@@ -459,6 +460,6 @@ void fac_display_progress(const char *name, double percentage) {
 }
 
 int fac_sort_result(const void * lhs, const void * rhs) {
-	const fac_cint * L = lhs, *R = rhs;
+	const fac_cint * L = (const fac_cint*)lhs, *R = (const fac_cint*)rhs;
 	return h_cint_compare(&L->cint, &R->cint);
 }

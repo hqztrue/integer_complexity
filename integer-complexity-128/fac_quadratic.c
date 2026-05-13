@@ -267,7 +267,7 @@ void preparation_part_4(qs_sheet *qs) {
 				0,
 		};
 		for (int i = 0; n[i]; ++i) {
-			n[i]->mem = n[i]->end = mem_aligned(mem) ;
+			n[i]->mem = n[i]->end = (h_cint_t*)mem_aligned(mem);
 			mem = n[i]->mem + (n[i]->size = vars_size);
 		}
 	}
@@ -281,32 +281,32 @@ void preparation_part_4(qs_sheet *qs) {
 	simple_int_to_cint(&qs->constants.MULTIPLIER, qs->multiplier);
 
 	// Allocates "s" rows
-	qs->s.data = mem_aligned(mem);
+	qs->s.data = (typeof(qs->s.data))mem_aligned(mem);
 	mem = mem_aligned(qs->s.data + qs->s.values.defined);
 	for (qs_sm i = 0; i < qs->s.values.defined; ++i) {
 		simple_inline_cint(&qs->s.data[i].B_terms, kn_size, &mem); // also "s" more cint
-		qs->s.data[i].A_inv_double_value_B_terms = mem;
+		qs->s.data[i].A_inv_double_value_B_terms = (qs_sm*)mem;
 		mem = mem_aligned(qs->s.data[i].A_inv_double_value_B_terms + qs->base.length);
 	}
-	qs->s.A_indexes = mem_aligned(mem); // the indexes of the prime numbers that compose A
+	qs->s.A_indexes = (qs_sm*)mem_aligned(mem); // the indexes of the prime numbers that compose A
 
 	// Allocates "base length" rows
-	qs->base.data = mem_aligned(qs->s.A_indexes + qs->s.values.double_value);
-	qs->m.positions[0] = mem_aligned(qs->base.data + qs->base.length);
-	qs->m.positions[1] = mem_aligned(qs->m.positions[0] + qs->base.length);
-	qs->m.sieve = mem_aligned(qs->m.positions[1] + qs->base.length);
-	qs->m.sieve[qs->m.length] = 0xFF ; // the end of the sieve evaluates to "true" under any "truthy" mask.
-	qs->m.flags = mem_aligned(qs->m.sieve + qs->m.length + sizeof(uint64_t));
+	qs->base.data = (typeof(qs->base.data))mem_aligned(qs->s.A_indexes + qs->s.values.double_value);
+	qs->m.positions[0] = (uint8_t**)mem_aligned(qs->base.data + qs->base.length);
+	qs->m.positions[1] = (uint8_t**)mem_aligned(qs->m.positions[0] + qs->base.length);
+	qs->m.sieve = (uint8_t*)mem_aligned(qs->m.positions[1] + qs->base.length);
+	qs->m.sieve[qs->m.length] = 0xFF; // the end of the sieve evaluates to "true" under any "truthy" mask.
+	qs->m.flags = (uint8_t*)mem_aligned(qs->m.sieve + qs->m.length + sizeof(uint64_t));
 	// buffer[0] is zeroed after use, buffer[1] isn't supposed zeroed.
-	qs->buffer[0] = mem_aligned(qs->m.flags + qs->base.length);
-	qs->buffer[1] = mem_aligned(qs->buffer[0] + buffers_size);
+	qs->buffer[0] = (qs_sm*)mem_aligned(qs->m.flags + qs->base.length);
+	qs->buffer[1] = (qs_sm*)mem_aligned(qs->buffer[0] + buffers_size);
 
 	// Other allocations
 	qs->relations.length.reserved = (qs_sm) relations_size ;
 	// Lanczos Block has a part of memory, it takes a "lite" snapshot before throwing relations.
-	qs->lanczos.snapshot = mem_aligned(qs->buffer[1] + buffers_size) ;
-	qs->relations.data = mem_aligned(qs->lanczos.snapshot + relations_size);
-	qs->divisors.data = mem_aligned(qs->relations.data + relations_size);
+	qs->lanczos.snapshot = (typeof(qs->lanczos.snapshot))mem_aligned(qs->buffer[1] + buffers_size) ;
+	qs->relations.data = (qs_relation**)mem_aligned(qs->lanczos.snapshot + relations_size);
+	qs->divisors.data = (cint**)mem_aligned(qs->relations.data + relations_size);
 	qs->mem.now = mem_aligned(qs->divisors.data + 512);
 
 	const qs_sm n_trees = (qs_sm) (sizeof(qs->uniqueness) / sizeof(struct avl_manager));
@@ -609,7 +609,7 @@ int qs_register_factor(qs_sheet * qs){
 					else cint_dup(F, &qs->vars.N);
 				} else if (i++ == 0)
 					// the current number isn't prime, but it's a known divisor of N.
-					qs->divisors.data[qs->divisors.length++] = node->key;
+					qs->divisors.data[qs->divisors.length++] = (cint*)node->key;
 			}
 	}
 	return res ;
@@ -687,11 +687,11 @@ void register_relation_kind_1(qs_sheet * qs, const cint * KEY, const qs_sm * con
 	struct avl_node *node = avl_at(&qs->uniqueness[0], KEY);
 	if (node->value)
 		return; // duplicates at this stage are ignored.
-	struct qs_relation * rel = qs->mem.now;
+	struct qs_relation * rel = (qs_relation*)qs->mem.now;
 	qs_sm i, j ;
 	qs->mem.now = rel + 1 ; // a relation must be swappable for Lanczos Block reducing.
-	rel->X = node->key; // constant X is stored by the node key.
-	rel->Y.data = qs->mem.now; // Y data length only decreases.
+	rel->X = (cint*)node->key; // constant X is stored by the node key.
+	rel->Y.data = (qs_sm*)qs->mem.now; // Y data length only decreases.
 	const size_t y_length = (args[1] - args[0] + args[3] - args[2]) >> 1 ;
 	rel->axis.Z.data = rel->Y.data + y_length; // writes Z ahead.
 	for (i = 0; i < 4;) {
@@ -729,7 +729,7 @@ void register_relation_kind_1(qs_sheet * qs, const cint * KEY, const qs_sm * con
 		qs->mem.now = rel->axis.Z.data + rel->axis.Z.length;
 		rel->id = ++qs->relations.length.now; // Keep the relation
 	} else {
-		char * open = (char*) rel, * close = qs->mem.now ;
+		char * open = (char*) rel, * close = (char*)qs->mem.now;
 		qs->mem.now = memset(open, 0, close - open); // Throw
 	}
 }
@@ -742,13 +742,13 @@ void register_relation_kind_2(qs_sheet * qs, const cint * KEY, const cint * VALU
 	struct avl_node *node = avl_at(&qs->uniqueness[1], VALUE);
 	struct qs_relation *old, *new1;
 	cint * BEZOUT = 0;
-	old = node->value;
+	old = (qs_relation*)node->value;
 	if (old) {
 		if (old->X == 0) return; // the value is already marked as "ignored".
 		if (old->axis.next) return; // accepting all "next" without caring reduce the "chance".
 		for (; old && h_cint_compare(KEY, old->X); old = old->axis.next);
 		if (old) return; // same KEY already registered.
-		old = node->value;
+		old = (qs_relation*)node->value;
 		if (old->axis.next == 0) {
 			// there is an "old" using the same VALUE, and it has no "next" yet.
 			cint *A = qs->vars.TEMP, *B = A + 1;
@@ -771,9 +771,9 @@ void register_relation_kind_2(qs_sheet * qs, const cint * KEY, const cint * VALU
 		}
 	}
 
-	new1 = mem_aligned(qs->mem.now);
+	new1 = (qs_relation*)mem_aligned(qs->mem.now);
 	qs->mem.now = new1 + 1;
-	new1->X = qs->mem.now;
+	new1->X = (cint*)qs->mem.now;
 
 	if (BEZOUT) {
 		// BEZOUT is stored directly after the new1 X, like in an array.
@@ -788,12 +788,12 @@ void register_relation_kind_2(qs_sheet * qs, const cint * KEY, const cint * VALU
 		simple_dup_cint(new1->X, KEY, &qs->mem.now);
 		if (old) {
 			for (; old->axis.next; old = old->axis.next);
-			old->axis.next = new1, old = node->value;
+			old->axis.next = new1, old = (qs_relation*)node->value;
 		} else node->value = new1;
 	}
 
 	// data buffered isn't persistent, it may be needed, so it's copied.
-	qs_sm * data = new1->Y.data = mem_aligned(qs->mem.now);
+	qs_sm * data = new1->Y.data = (qs_sm*)mem_aligned(qs->mem.now);
 	new1->Y.length = (qs_sm) (args[1] - args[0]);
 	memcpy(data, args[0], new1->Y.length * sizeof(*data));
 	memcpy(data + new1->Y.length, args[2], (args[3] - args[2]) * sizeof(*data));
@@ -808,7 +808,7 @@ void register_relation_kind_2(qs_sheet * qs, const cint * KEY, const cint * VALU
 				// combines, it registers a regular relation using the 2 buffers.
 				cint_mul_mod(qs->calc, &qs->vars.CYCLE, old->X, &qs->constants.kN, &qs->vars.KEY);
 				qs_sm *  begin = qs->buffer[0], *  pen = begin;
-				data = memset(qs->buffer[1], 0, qs->base.length * sizeof(*data));
+				data = (qs_sm*)memset(qs->buffer[1], 0, qs->base.length * sizeof(*data));
 				for (qs_sm i = 0; i < new1->Y.length; i += 2)
 					data[new1->Y.data[i]] += new1->Y.data[i + 1];
 				for (qs_sm i = 0; i < old->Y.length; i += 2)
@@ -837,7 +837,7 @@ void finalization_part_1(qs_sheet * qs, const uint64_t *  const lanczos_answer) 
 		if (mask >> row & 1){
 			// use the Fermat's (1607 - 1665) method to compute a factorization of N.
 			simple_int_to_cint(X, 1), simple_int_to_cint(TMP, 1), simple_int_to_cint(Y, 1);
-			power_of_primes = memset(qs->buffer[1], 0, qs->base.length * sizeof(*power_of_primes));
+			power_of_primes = (qs_sm*)memset(qs->buffer[1], 0, qs->base.length * sizeof(*power_of_primes));
 			for (qs_sm i = 0; i < qs->relations.length.now; ++i)
 				if (null_rows[i] >> row & 1) {
 					const struct qs_relation *  const rel = qs->relations.data[i];
