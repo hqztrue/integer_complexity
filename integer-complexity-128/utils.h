@@ -105,5 +105,9 @@ u128 pow128(u128 x,int y){
 	return ans;
 }
 
+double log3(double x){
+	return log(x)/log(3);
+}
+
 #endif //__UTILS__
 

@@ -7,8 +7,8 @@ using namespace std;
 #include "consts.h"
 
 typedef unsigned long long ull;
-//const int N1=210,N2=210,N3=28,N4=16,N5=5;
-const int N1=315,N2=315,N3=42,N4=24,N5=7;
+const int N1=210,N2=210,N3=28,N4=16,N5=5;
+//const int N1=315,N2=315,N3=42,N4=24,N5=7;
 //const int N1=430,N2=430,N3=58,N4=34,N5=12;
 const int f0[]={0,1,2,3,4,5,5,6,6,6,7,8}; //f(n)
 auto f=new int[N1+2][N2+2][N3+2][N4+2][N5+2];

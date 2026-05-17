@@ -27,6 +27,8 @@ const ushort inf1=10000;
 const uint inf32=~0u>>1;
 const ull U=1ull<<62;
 const u128 zero=0,inf128=~zero>>1;
+const double eps=1e-8;
+const int f0[]={0,1,2,3,4,5,5,6,6,6,7,8,7,8,8,8,8,9,8,9,9,9,10,11,9,10,10,9,10};
 unordered_map<ull,pair<ushort,ushort>> H;  //memoization for dfs()
 unordered_map<u128,pair<ushort,ushort>> H1;  //memoization for dfs128()
 //unordered_map<ull,pair<ushort,ushort>,std::hash<ull>,std::equal_to<ull>,myallocator<ull>> H;
@@ -37,6 +39,10 @@ string s[10000005];  //record the formulas for f(n) (n<=n0).
 uint n0;  //threshold for precomputing f(n) (n<=n0).
 u128 N0;  //we only compute f(n) for n<=N0.
 ull CNT; int T0=clock();  //timer for the current progress
+
+double defect(int x,int v){
+	return v-3*log3(x);
+}
 
 uint log3_floor(u128 n){
 	uint ans=0;
@@ -63,13 +69,14 @@ int complexity_LB_naive(u128 n){  //naive lower bound for f(n).
 }
 
 unordered_map<u128,int> M_lb;  //record the numbers with low defect.
+double M_lb_thres=1;
 int complexity_LB(u128 n){  //better lower bound for f(n). (improvable)
 	//return complexity_LB_naive(n);
 	if (n==1)return 1;
 	int l=upper_bound(g+1,g+g1,n)-g-1;
 	auto it=M_lb.find(n);
 	if (it!=M_lb.end())return l+it->second;
-	return l+2;
+	return l+(int)floor(M_lb_thres)+1;
 }
 
 int complexity_UB(u128 n){
@@ -78,7 +85,49 @@ int complexity_UB(u128 n){
 	return floor(c*log((double)n)/log(3));
 }
 
+void gen_low_defect(double d){
+	d+=eps;
+	const int LOW_DEFECT_ADD_MAX = 15;
+	vector<pair<u128,double>> a;
+	a.push_back({1,defect(1,1)});
+	u128 _inf128=inf128/3;
+	int a1_old=0;
+	double sum_old=0;
+	while (1){
+		sort(a.begin(),a.end());
+		int a1=1;
+		for (int i=1;i<a.size();++i)
+			if (a[i].first!=a[i-1].first)a[a1++]=a[i];
+		a.resize(a1);
+		double sum=0;
+		for (int i=0;i<a1;++i)sum+=a[i].second;
+		if (a1==a1_old&&fabs(sum-sum_old)<eps)break;
+		printf("a1=%d %.15lf %d %.15lf\n",a1,sum,a1_old,sum_old);
+		/*for (int i=0;i<a1;++i){
+			print(a[i].first);
+			printf(" %.10lf\n",a[i].second);
+		}*/
+		a1_old=a1; sum_old=sum;
+		for (int i=0;i<a1;++i)
+			for (int j=1;j<=LOW_DEFECT_ADD_MAX;++j)
+				if (a[i].first+j<=_inf128){
+					double d0=defect(a[i].first+j,int(a[i].second+3*log3(a[i].first)+f0[j]+eps));
+					if (d0<-eps){
+						print(a[i].first);
+						printf(" err: %.10lf %d %d\n",a[i].second,j,f0[j]);
+						for (;;);
+					}
+					if (d0<=d)a.push_back({a[i].first+j,d0});
+				}
+		for (int i=0;i<a1;++i)
+			for (int j=0;j<=i&&a[i].first<=_inf128/a[j].first;++j)
+				if (a[i].second+a[j].second<=d)a.push_back({a[i].first*a[j].first,a[i].second+a[j].second});
+	}
+	printf("gen_low_defect: %d\n",a.size());
+}
+
 int _init=[](){ //precomputation
+	gen_low_defect(M_lb_thres);
 	for (int i=0;;++i){
 		g[i]=calc_g(i);
 		if (i&&g[i]<g[i-1]){g1=i; break;}
