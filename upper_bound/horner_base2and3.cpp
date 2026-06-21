@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
 using namespace std;
-const int f0[]={0,1,2,3,4,5,5,6,6};
+//const int f0[]={0,1,2,3,4,5,5,6,6};
 void Minus(int &x,int y,int &cnt){
 	assert(x>=y);
 	x-=y;
@@ -50,7 +50,7 @@ int ipow(int x,int y){
 	return v;
 }
 int f(int n){
-	if (n<9)return f0[n];
+	if (n<=5)return n;
 	if (n%2==0)return f(n/2)+2;
 	if (n%4==1)return f(n/4)+5;
 	if (n%8==3)return f(n/8)+8;
@@ -77,7 +77,6 @@ int main()
 {
 	//freopen("1.in","r",stdin);
 	//freopen("1.out","w",stdout);
-	//printf("%.6lf %.6lf\n",Ratio(3,2),Ratio(9,9));
 	//for (int i=2;i<9;++i)printf("%.6lf\n",Ratio(f0[i],i));
 	int T=1000000000;
 	double ma=0;
